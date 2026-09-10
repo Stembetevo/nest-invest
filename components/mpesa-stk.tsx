@@ -97,7 +97,7 @@ export function MpesaStkSheet({
       <SheetContent
         side="bottom"
         showCloseButton={false}
-        className="mx-auto max-h-[92dvh] w-full max-w-lg rounded-t-3xl border-x border-t p-0"
+        className="z-[80] mx-auto max-h-[92dvh] w-full max-w-lg rounded-t-3xl border-x border-t p-0"
       >
         <div className="stk-sheet px-5 pb-6 pt-3">
           <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-primary-foreground/25" />

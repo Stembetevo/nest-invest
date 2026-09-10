@@ -13,15 +13,17 @@ export const defaultState: NestState = {
   pledges: [],
 }
 
+let snapshot: NestState = defaultState
+let snapshotRaw: string | null = null
+let snapshotReady = false
+
 function isBrowser() {
   return typeof window !== "undefined"
 }
 
-export function loadState(): NestState {
-  if (!isBrowser()) return defaultState
+function parse(raw: string | null): NestState {
+  if (!raw) return defaultState
   try {
-    const raw = window.localStorage.getItem(KEY)
-    if (!raw) return defaultState
     const parsed = JSON.parse(raw) as Partial<NestState>
     return {
       ...defaultState,
@@ -36,8 +38,21 @@ export function loadState(): NestState {
   }
 }
 
+export function loadState(): NestState {
+  if (!isBrowser()) return defaultState
+  const raw = window.localStorage.getItem(KEY)
+  if (snapshotReady && raw === snapshotRaw) return snapshot
+  snapshotRaw = raw
+  snapshot = parse(raw)
+  snapshotReady = true
+  return snapshot
+}
+
 function persist(next: NestState) {
-  window.localStorage.setItem(KEY, JSON.stringify(next))
+  snapshot = next
+  snapshotRaw = JSON.stringify(next)
+  snapshotReady = true
+  window.localStorage.setItem(KEY, snapshotRaw)
   window.dispatchEvent(new Event(EVENT))
 }
 
@@ -70,6 +85,7 @@ export function makeReceiptCode() {
 }
 
 function subscribe(onStoreChange: () => void) {
+  if (!isBrowser()) return () => {}
   window.addEventListener(EVENT, onStoreChange)
   window.addEventListener("storage", onStoreChange)
   return () => {
@@ -78,16 +94,8 @@ function subscribe(onStoreChange: () => void) {
   }
 }
 
-function clientHydrated() {
-  return true
-}
-
-function serverHydrated() {
-  return false
-}
+const getServerSnapshot = () => defaultState
 
 export function useNestStore() {
-  const state = useSyncExternalStore(subscribe, loadState, () => defaultState)
-  const hydrated = useSyncExternalStore(subscribe, clientHydrated, serverHydrated)
-  return { ...state, hydrated }
+  return useSyncExternalStore(subscribe, loadState, getServerSnapshot)
 }

@@ -10,7 +10,7 @@ import { formatTenor } from "@/lib/money"
 import { saveState, useNestStore } from "@/lib/store"
 
 export default function AlertsPage() {
-  const { alertsEnabled, watchedAuctionIds, hydrated } = useNestStore()
+  const { alertsEnabled, watchedAuctionIds } = useNestStore()
   const auctions = getAuctions()
   const open = auctions.filter((auction) => auction.status === "open")
   const upcoming = auctions.filter((auction) => auction.status === "upcoming")
@@ -61,12 +61,12 @@ export default function AlertsPage() {
           <div>
             <p className="font-medium">Ping me before books close</p>
             <p className="text-sm text-muted-foreground">
-              {hydrated && alertsEnabled ? "Alerts on for open and upcoming sales." : "Off — you will only see auctions in the app."}
+              {alertsEnabled ? "Alerts on for open and upcoming sales." : "Off — you will only see auctions in the app."}
             </p>
           </div>
         </div>
         <Switch
-          checked={hydrated && alertsEnabled}
+          checked={alertsEnabled}
           onCheckedChange={toggleMaster}
           aria-label="Toggle auction alerts"
         />

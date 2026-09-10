@@ -18,16 +18,12 @@ const STATUS_COPY: Record<PledgeStatus, string> = {
 }
 
 export default function PortfolioPage() {
-  const { pledges, hydrated } = useNestStore()
+  const { pledges } = useNestStore()
   const featured = getFeaturedAuction()
 
   const pledged = pledges.reduce((sum, item) => sum + item.amount, 0)
   const earn = pledges.reduce((sum, item) => sum + item.youEarn, 0)
   const fees = pledges.reduce((sum, item) => sum + item.nestFee, 0)
-
-  if (!hydrated) {
-    return <p className="text-sm text-muted-foreground">Loading your pledges…</p>
-  }
 
   if (!pledges.length) {
     return (

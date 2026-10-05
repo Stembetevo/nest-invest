@@ -38,7 +38,8 @@ jobs:
       - name: Build static site
         run: pnpm build
         env:
-          NEXT_PUBLIC_BASE_PATH: /nest-invest
+          # Empty because the site is served from the root of a custom domain
+          NEXT_PUBLIC_BASE_PATH: ""
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

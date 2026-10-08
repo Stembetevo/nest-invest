@@ -6,11 +6,12 @@ import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
 import { SubmitButton } from "@/components/submit-button"
 import { validateLoginForm } from "@/lib/validation"
-import { formText, useAuthForm } from "./use-auth-form"
+import { formText, useValidatedAction } from "@/components/use-validated-action"
 
 export function LoginForm({ next, notice }: { next?: string; notice?: string }) {
-  const { state, formAction, pending, onSubmit, errors, serverError } = useAuthForm(
+  const { state, formAction, pending, onSubmit, errors, serverError } = useValidatedAction(
     login,
+    {},
     (formData) =>
       validateLoginForm({
         email: formText(formData, "email"),

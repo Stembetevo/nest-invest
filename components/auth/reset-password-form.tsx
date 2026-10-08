@@ -5,11 +5,12 @@ import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
 import { SubmitButton } from "@/components/submit-button"
 import { MIN_PASSWORD_LENGTH, validateResetForm } from "@/lib/validation"
-import { formText, useAuthForm } from "./use-auth-form"
+import { formText, useValidatedAction } from "@/components/use-validated-action"
 
 export function ResetPasswordForm() {
-  const { formAction, pending, onSubmit, errors, serverError } = useAuthForm(
+  const { formAction, pending, onSubmit, errors, serverError } = useValidatedAction(
     resetPassword,
+    {},
     (formData) =>
       validateResetForm({
         password: formText(formData, "password"),

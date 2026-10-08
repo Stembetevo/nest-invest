@@ -5,11 +5,12 @@ import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
 import { SubmitButton } from "@/components/submit-button"
 import { MIN_PASSWORD_LENGTH, validateSignupForm } from "@/lib/validation"
-import { formText, useAuthForm } from "./use-auth-form"
+import { formText, useValidatedAction } from "@/components/use-validated-action"
 
 export function SignupForm() {
-  const { state, formAction, pending, onSubmit, errors, serverError } = useAuthForm(
+  const { state, formAction, pending, onSubmit, errors, serverError } = useValidatedAction(
     signup,
+    {},
     (formData) =>
       validateSignupForm({
         email: formText(formData, "email"),

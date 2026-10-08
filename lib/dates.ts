@@ -100,6 +100,40 @@ export function formatDateTime(iso: string) {
   }).format(new Date(iso))
 }
 
+/** Today's calendar date in Nairobi as `YYYY-MM-DD`. */
+export function nairobiTodayIso(now = new Date()) {
+  const parts = nairobiParts(now)
+  return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`
+}
+
+/** Formats a `YYYY-MM-DD` calendar date, e.g. "Thu, 8 Oct 2026". */
+export function formatDateOnly(date: string) {
+  return new Intl.DateTimeFormat("en-KE", {
+    timeZone: NAIROBI,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${date}T12:00:00+03:00`))
+}
+
+/** Formats a `YYYY-MM` month key, e.g. "Oct 2026" (or "Oct" when short). */
+export function formatMonthKey(key: string, short = false) {
+  return new Intl.DateTimeFormat("en-KE", {
+    timeZone: NAIROBI,
+    month: short ? "short" : "long",
+    ...(short ? {} : { year: "numeric" }),
+  }).format(new Date(`${key}-15T12:00:00+03:00`))
+}
+
+export function formatTime(iso: string) {
+  return new Intl.DateTimeFormat("en-KE", {
+    timeZone: NAIROBI,
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso))
+}
+
 export function formatCountdown(ms: number) {
   if (ms <= 0) return "Closed"
   const totalSeconds = Math.floor(ms / 1000)

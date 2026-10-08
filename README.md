@@ -1,58 +1,176 @@
-# nest (Nest Bills)
+# Nest Finance
 
-**M-Pesa for Treasury Bills.** nest lets anyone in Kenya start at **KSh 100**, pledge via M-Pesa in **3 taps**, and earn current government T-bill rates. nest does not take investment risk — it routes. The fee is **1% of the interest**, not of principal.
+> Financial identity infrastructure for the businesses and creators
+> traditional financial systems overlook.
 
-This repository is a **Phase 1 product demo**: auction alerts, 3-tap pledging, and a simple portfolio. M-Pesa STK, CBK auction books, and DhowCSD settlement are simulated in the browser (`localStorage`). Do not send real money here. This is not a CMA-licensed offer and not a Central Bank of Kenya product.
+Nest Finance turns fragmented financial activity into a verified,
+portable financial identity.
 
-## Run locally
+We help creators, informal businesses and independent professionals
+prove their income, understand their cash flow and build a financial
+record that can be shared with credit providers.
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
+## The Problem
 
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Dev server on port **43123** |
-| `npm run build` | Production build |
-| `npm run start` | Serve the production build on 43123 |
-| `npm run lint` | ESLint |
-| `npm test` | Vitest unit tests (`tests/`) |
+Millions of businesses and independent workers generate real income
+without generating the financial records required by traditional
+credit systems.
 
-## Try the demo
+Their financial activity is fragmented across:
 
-1. Home shows this week’s 91 / 182 / 364-day auctions (rates ~15%, last 91-day take-up 204% oversubscribed).
-2. **Alerts** — toggle SMS-style reminders (stored on device only).
-3. **Pledge from KSh 100** — pick an amount, confirm the STK sheet, enter a 4-digit PIN.
-4. Any PIN works except **0000**, which fails so you can see the error path. Cancel the sheet to abandon the pledge.
-5. **Portfolio** lists pledges, expected interest, nest’s 1% cut, and payout date.
-6. **How it works → Reset this demo** clears pledges and alerts.
+- Mobile money
+- Bank accounts
+- Creator platforms
+- Payment processors
+- Cash
+- Informal credit
+- Business expenses
 
-Fee math: `interest = principal × annualRate × (days / 365)`; `nestFee = interest × 1%`; you keep the rest.
+The result is a paradox:
 
-## What this is not (yet)
+> Someone can have substantial income and still have little
+> evidence of their financial capacity.
 
-- Real Safaricom Daraja STK, CBK auction APIs, or DhowCSD accounts
-- KYC, CMA licensing, or moving actual M-Pesa funds
-- Phase 2 auto-laddering (beat MMFs without watching every Wednesday)
-- Phase 3 secondary market (make T-bills feel liquid)
+Nest is designed to solve the evidence problem.
 
-The T-bill demo has no login: identity is an M-Pesa number kept in `localStorage` under `nest-bills-v1`.
+---
 
-## Creator income (Supabase)
+## What Nest Does
 
-Creators can sign up with email and password, finish a 3-step onboarding, track income in KSh, and chat with Manikka (mock replies for now). These screens live at `/signup`, `/login`, `/onboarding`, `/dashboard`, `/income`, and `/chat`. The T-bill demo pages stay public.
+Nest aggregates and normalizes financial activity from multiple
+sources and converts it into a Financial Identity.
 
-### Setup
+The system tracks:
 
-1. Create a Supabase project and copy `.env.example` to `.env.local`. Fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL`.
-2. Apply the migration in `supabase/migrations/`, either with `supabase db push` or by pasting it into the SQL editor. It creates `profiles`, `income_sources`, and `income_entries`, all with row level security.
-3. In Supabase → Authentication → URL Configuration, set the Site URL to `NEXT_PUBLIC_SITE_URL` and add `<NEXT_PUBLIC_SITE_URL>/auth/callback` to Redirect URLs. Confirmation and password-reset links go through that route.
+- Income
+- Expenses
+- Cash flow
+- Profitability
+- Debt
+- Repayment history
+- Income consistency
 
-Without the Supabase variables, the T-bill demo still works. The creator pages show a "not set up" message instead.
+Nest then uses AI to explain the financial data and identify
+potential financial risks and opportunities.
 
-### Manikka
+---
 
-`sendMessageToManikka` in `lib/manikka-chat.ts` returns canned replies after a short delay. Swap in the real AI backend there; the chat UI does not need to change. Any message containing the word "fail" makes the mock throw, so you can check the error and retry states.
+## MVP
+
+The first version of Nest focuses on one core capability:
+
+### Proving income.
+
+Users can connect or import financial data from supported sources,
+including:
+
+- M-Pesa
+- Bank accounts
+- Stripe
+- CSV files
+- Manual records
+
+Nest normalizes this data into a unified financial ledger.
+
+From that ledger we generate:
+
+### Financial Profile
+
+- Verified income
+- Average monthly income
+- Income consistency
+- Monthly expenses
+- Estimated profitability
+- Cash-flow stability
+- Existing debt
+- Repayment history
+
+---
+
+## Manikka
+
+Manikka is Nest's AI CFO.
+
+Manikka analyzes a user's financial activity and provides
+contextual financial insights.
+
+Examples include:
+
+- Cash-flow warnings
+- Expense anomalies
+- Profitability analysis
+- Income trends
+- Debt affordability
+- Financial recommendations
+
+Manikka does not replace the Financial Identity.
+
+It interprets it.
+
+---
+
+## Financial Identity
+
+The Financial Identity is the core Nest primitive.
+
+A user's Financial Identity represents their financial history in a
+structured and verifiable format.
+
+It can eventually be used by authorized third parties such as:
+
+- Lenders
+- SACCOs
+- Financial institutions
+- Payment providers
+- Credit platforms
+
+Users control when and with whom their financial information is shared.
+
+---
+
+## Credit Infrastructure
+
+Nest is not initially the lender.
+
+Instead, Nest provides financial intelligence to lending partners.
+
+The flow is:
+
+User
+→ Financial Data
+→ Nest Financial Identity
+→ Consent
+→ Lending Partner
+→ Credit Decision
+
+This allows Nest to build the financial identity layer before
+becoming involved in capital provision.
+
+---
+
+## Data Architecture
+
+```text
+Financial Sources
+       |
+       v
+Data Connectors
+       |
+       v
+Transaction Normalization
+       |
+       v
+Financial Ledger
+       |
+       +------> Financial Analytics
+       |
+       +------> Financial Identity
+       |
+       +------> Manikka AI CFO
+       |
+       +------> Credit Profile
+       |
+       v
+Authorized Financial Partners

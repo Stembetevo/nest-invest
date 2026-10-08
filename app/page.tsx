@@ -18,7 +18,7 @@ export default function HomePage() {
   return (
     <div className="space-y-8">
       <section className="hero-panel rounded-3xl px-5 py-7 text-primary-foreground sm:px-8">
-        <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[var(--gold)]">
+        <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-(--gold)">
           Government paper · M-Pesa rails
         </p>
         <h1 className="font-heading mt-3 max-w-xl text-4xl leading-[1.05] tracking-tight sm:text-5xl">
@@ -37,7 +37,7 @@ export default function HomePage() {
           <Button
             asChild
             size="lg"
-            className="h-12 bg-[var(--gold)] px-5 text-base text-primary hover:bg-[var(--gold)]/90"
+            className="h-12 bg-(--gold) px-5 text-base text-primary hover:bg-(--gold)/90"
           >
             <Link href={featured ? `/pledge?auction=${featured.id}` : "/pledge"}>
               Pledge from KSh 100

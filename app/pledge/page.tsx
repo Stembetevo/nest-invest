@@ -1,16 +1,24 @@
+"use client"
+
+import { Suspense } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { PledgeForm } from "@/components/pledge-form"
 import { Button } from "@/components/ui/button"
 import { getAuction, getFeaturedAuction } from "@/lib/auctions"
 import { formatTenor } from "@/lib/money"
 
-export default async function PledgePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ auction?: string }>
-}) {
-  const params = await searchParams
-  const auction = (params.auction ? getAuction(params.auction) : null) ?? getFeaturedAuction()
+export default function PledgePage() {
+  return (
+    <Suspense>
+      <PledgeContent />
+    </Suspense>
+  )
+}
+
+function PledgeContent() {
+  const searchParams = useSearchParams()
+  const auction = (searchParams.get("auction") ? getAuction(searchParams.get("auction")!) : null) ?? getFeaturedAuction()
 
   if (!auction) {
     return (

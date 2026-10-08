@@ -19,6 +19,7 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build on 43123 |
 | `npm run lint` | ESLint |
+| `npm test` | Vitest unit tests (`tests/`) |
 
 ## Try the demo
 
@@ -38,4 +39,20 @@ Fee math: `interest = principal × annualRate × (days / 365)`; `nestFee = inter
 - Phase 2 auto-laddering (beat MMFs without watching every Wednesday)
 - Phase 3 secondary market (make T-bills feel liquid)
 
-Identity is an M-Pesa number kept in `localStorage` under `nest-bills-v1`. There is no login and no database.
+The T-bill demo has no login: identity is an M-Pesa number kept in `localStorage` under `nest-bills-v1`.
+
+## Creator income (Supabase)
+
+Creators can sign up with email and password, finish a 3-step onboarding, track income in KSh, and chat with Manikka (mock replies for now). These screens live at `/signup`, `/login`, `/onboarding`, `/dashboard`, `/income`, and `/chat`. The T-bill demo pages stay public.
+
+### Setup
+
+1. Create a Supabase project and copy `.env.example` to `.env.local`. Fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL`.
+2. Apply the migration in `supabase/migrations/`, either with `supabase db push` or by pasting it into the SQL editor. It creates `profiles`, `income_sources`, and `income_entries`, all with row level security.
+3. In Supabase → Authentication → URL Configuration, set the Site URL to `NEXT_PUBLIC_SITE_URL` and add `<NEXT_PUBLIC_SITE_URL>/auth/callback` to Redirect URLs. Confirmation and password-reset links go through that route.
+
+Without the Supabase variables, the T-bill demo still works. The creator pages show a "not set up" message instead.
+
+### Manikka
+
+`sendMessageToManikka` in `lib/manikka-chat.ts` returns canned replies after a short delay. Swap in the real AI backend there; the chat UI does not need to change. Any message containing the word "fail" makes the mock throw, so you can check the error and retry states.

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { MessageCircle } from "lucide-react"
+import { FocusOnChatClose } from "@/components/chat/focus-on-chat-close"
 import { ManikkaAvatar } from "@/components/chat/manikka-avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -22,6 +23,7 @@ export function ManikkaCard({ insight }: { insight: string }) {
             Ask Manikka
           </Link>
         </Button>
+        <FocusOnChatClose targetId="open-manikka-chat" />
       </CardContent>
     </Card>
   )

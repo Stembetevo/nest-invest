@@ -57,7 +57,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href="/dashboard"
                 className="rounded-lg px-2 py-1.5 text-sm font-medium text-primary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
-                Creator income
+                Get Started
               </Link>
             </div>
           ) : null}

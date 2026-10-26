@@ -130,3 +130,9 @@
   }
 }
 
+.hero-panel {
+  background:
+    radial-gradient(700px 240px at 90% -20%, oklch(0.84 0.14 88 / 0.22), transparent 55%),
+    linear-gradient(165deg, oklch(0.28 0.04 258), oklch(0.2 0.035 258));
+}
+

@@ -1,64 +1,46 @@
 import Link from "next/link"
-import { SiteMenu } from "@/components/site-menu"
+import { EarlyAccessForm, SharingExample } from "@/components/landing-examples"
 import { ManikkaWordmark } from "@/components/manikka-mark"
-import { SAMPLE_REPORT } from "@/lib/income"
-import { formatKes } from "@/lib/money"
+import { SiteMenu } from "@/components/site-menu"
 
 const PROBLEMS = [
   {
-    title: "Informal income",
-    body: "The money arrives. It never looks like a salary a credit officer can tick.",
+    title: "Scattered income",
+    body: "Brand deals, YouTube, gigs and more, with no single record.",
   },
   {
     title: "No payslip",
-    body: "There is no HR letter and no bank form. A till statement is the record.",
+    body: "No proof means no loan.",
   },
   {
     title: "No credit history",
-    body: "Without a file, the answer is no — even when the deposits are real.",
+    body: "Lenders can’t price what they can’t read.",
   },
 ]
 
-const STEPS = [
-  {
-    n: "01",
-    title: "Share your M-Pesa",
-    body: "You approve six months of inflows. Manikka never sees your PIN and never moves the money.",
-  },
-  {
-    n: "02",
-    title: "We read the pattern",
-    body: "Repeating tills, paybills, and regular senders become one monthly income.",
-  },
-  {
-    n: "03",
-    title: "Lenders get proof",
-    body: "A report with a score, a range, and the months behind it. They pay to read it. You do not.",
-  },
+const LENDER_POINTS = [
+  "Income you can trust.",
+  "A capacity score, not just a credit score.",
+  "Consent-based by design.",
 ]
 
-const QUESTIONS = [
-  {
-    q: "Where does the data come from?",
-    a: "Six months of M-Pesa inflows you choose to share. The read looks for repeating payers. It does not ask for your PIN.",
-  },
-  {
-    q: "Do you take the money?",
-    a: "No. Manikka does not hold funds, issue the loan, or sit in the payment. Lenders pay when you approve a report.",
-  },
-  {
-    q: "Who can see my report?",
-    a: "Only you, until you share it. A lender sees the score, the monthly income, and the pattern — not your raw statement.",
-  },
-  {
-    q: "What if my income is informal?",
-    a: "That is the file we build. Till sales, paybills, and people who pay you on a rhythm all count when they repeat.",
-  },
+const ROADMAP = [
+  { label: "Now", body: "Income tracking and Manikka." },
+  { label: "Next", body: "Verified income reports and credit limits." },
+  { label: "Coming soon", body: "Stablecoin-powered credit." },
+]
+
+const FOOTER_LINKS = [
+  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Instagram", href: "https://instagram.com" },
+  { label: "X", href: "https://x.com" },
+  { label: "LinkedIn", href: "https://linkedin.com" },
+  { label: "TikTok", href: "https://tiktok.com" },
+  { label: "Contact", href: "mailto:?subject=Contact%20Manikka" },
 ]
 
 export function LandingPage() {
-  const peak = Math.max(...SAMPLE_REPORT.months.map((month) => month.inflow))
-
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-background/80 backdrop-blur-md">
@@ -84,13 +66,13 @@ export function LandingPage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <Link
-                href="/sign-in"
+                href="/signup"
                 className="inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
               >
                 Get started
               </Link>
               <a
-                href="#proof"
+                href="#manikka"
                 className="text-sm font-medium text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
               >
                 See it in action
@@ -108,9 +90,9 @@ export function LandingPage() {
             <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
               You get paid. Banks can’t see it.
             </h2>
-            <div className="mt-10 grid gap-8 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/10">
+            <div className="mt-10 grid border-y border-white/15 sm:grid-cols-3 sm:divide-x sm:divide-white/15">
               {PROBLEMS.map((item) => (
-                <div key={item.title} className="sm:px-6 sm:first:pl-0 sm:last:pr-0">
+                <div key={item.title} className="py-5 sm:px-6 sm:first:pl-0 sm:last:pr-0">
                   <h3 className="text-base font-medium">{item.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
                 </div>
@@ -119,205 +101,139 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="product" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              The product
-            </p>
-            <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
-              A file for income that never had one.
-            </h2>
-            <ol className="mt-10 grid gap-6 lg:grid-cols-3">
-              {STEPS.map((step) => (
-                <li key={step.n} className="border-t border-white/15 pt-5">
-                  <p className="text-[11px] font-semibold tracking-[0.18em] text-[var(--gold)]">
-                    {step.n}
-                  </p>
-                  <h3 className="mt-3 text-lg font-medium">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section id="proof" className="scroll-mt-20 border-t border-white/10">
+        <section id="manikka" className="scroll-mt-20 border-t border-white/10">
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:py-20 lg:grid-cols-2">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-                The proof
+                Meet Manikka
               </p>
               <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
-                A profile for every informal earner.
+                A CFO for every informal earners.
               </h2>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Lenders stop asking for a payslip that does not exist. They read a score, a
-                monthly income, and the six months that produced it.
+                Manikka tracks your cash flow, plans your tax set-aside and tells you what you can
+                afford.
               </p>
-              <dl className="mt-8 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <dt className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    Before
-                  </dt>
-                  <dd className="mt-1 text-sm">No payslip. No file. Declined.</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    After
-                  </dt>
-                  <dd className="mt-1 text-sm">Verified income a lender can price.</dd>
-                </div>
-              </dl>
             </div>
-
-            <article className="rounded-3xl border border-white/10 bg-card p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    Sample report
-                  </p>
-                  <p className="mt-1 text-lg font-medium">{SAMPLE_REPORT.name}</p>
-                  <p className="text-sm text-muted-foreground">{SAMPLE_REPORT.place}</p>
-                </div>
-                <ScoreRing score={SAMPLE_REPORT.score} />
-              </div>
-              <p className="mt-2 text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Verified monthly income
+            <article className="rounded-2xl border border-white/10 bg-card p-5 sm:p-6">
+              <p className="inline-flex rounded-md border border-[var(--gold)]/50 px-2 py-1 text-[11px] font-semibold tracking-[0.16em] text-[var(--gold)] uppercase">
+                Example
               </p>
-              <p className="font-heading text-4xl">{formatKes(SAMPLE_REPORT.monthlyIncome)}</p>
-              <div className="mt-6 flex h-24 items-end gap-2" aria-hidden="true">
-                {SAMPLE_REPORT.months.map((month) => (
-                  <div key={month.label} className="flex flex-1 flex-col items-center gap-2">
-                    <div
-                      className="w-full rounded-sm bg-[var(--gold)]/80"
-                      style={{ height: `${Math.max(12, (month.inflow / peak) * 72)}px` }}
-                    />
-                    <span className="text-[10px] text-muted-foreground">{month.label}</span>
-                  </div>
-                ))}
-              </div>
+              <p className="mt-4 rounded-lg bg-white/5 px-4 py-3 text-sm text-muted-foreground">
+                Can I afford a new camera?
+              </p>
+              <p className="mt-3 border-l-2 border-[var(--gold)] px-4 py-3 text-sm leading-relaxed">
+                Your 3-month average is KES 62,000. Keep a loan payment under KES 12,000 a month.
+              </p>
             </article>
           </div>
         </section>
 
-        <section id="pricing" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              Pricing
-            </p>
-            <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
-              Free for you. Lenders pay for the report.
-            </h2>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <article className="rounded-3xl border border-white/10 p-6">
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                  Earners
-                </p>
-                <p className="font-heading mt-3 text-4xl">KSh 0</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Connect a statement, read your own report, and choose when a lender may see it.
-                </p>
-              </article>
-              <article className="rounded-3xl border border-[var(--gold)]/40 bg-white/5 p-6">
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-[var(--gold)] uppercase">
-                  Lenders
-                </p>
-                <p className="font-heading mt-3 text-4xl">KSh 500</p>
-                <p className="mt-1 text-sm text-muted-foreground">per approved report</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  They pay when you share. The price is for the proof, not for your principal.
-                </p>
-              </article>
+        <section id="privacy" className="scroll-mt-20 border-t border-white/10">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:py-20 lg:grid-cols-2">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
+                Privacy and control
+              </p>
+              <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
+                Your data. Your call.
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+                You choose what is shared, with whom, and for how long. You can revoke access any
+                time.
+              </p>
+            </div>
+            <SharingExample />
+          </div>
+        </section>
+
+        <section id="lenders" className="scroll-mt-20 border-t border-white/10">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:py-20 lg:grid-cols-2">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
+                For lenders and fintechs
+              </p>
+              <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
+                Verified income, through one API.
+              </h2>
+            </div>
+            <div>
+              <ul className="space-y-3 text-sm">
+                {LENDER_POINTS.map((point) => (
+                  <li key={point} className="flex gap-3">
+                    <span aria-hidden="true" className="text-muted-foreground">
+                      ✓
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="mailto:?subject=Partner%20with%20Manikka"
+                className="mt-8 inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
+              >
+                Partner with us
+              </a>
             </div>
           </div>
         </section>
 
-        <section id="faq" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-3xl px-5 py-16 sm:py-20">
+        <section id="roadmap" className="scroll-mt-20 border-t border-white/10">
+          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
             <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              Questions
+              Roadmap
             </p>
             <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
-              What lenders will ask you too.
+              Where we are going.
             </h2>
-            <div className="mt-8 divide-y divide-white/10 border-y border-white/10">
-              {QUESTIONS.map((item) => (
-                <details key={item.q} className="group py-4">
-                  <summary className="cursor-pointer list-none text-base font-medium [&::-webkit-details-marker]:hidden">
-                    <span className="flex items-center justify-between gap-4">
-                      {item.q}
-                      <span aria-hidden="true" className="text-muted-foreground group-open:hidden">
-                        +
-                      </span>
-                      <span aria-hidden="true" className="hidden text-muted-foreground group-open:inline">
-                        –
-                      </span>
-                    </span>
-                  </summary>
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                    {item.a}
+            <div className="mt-10 grid border-y border-white/15 sm:grid-cols-3 sm:divide-x sm:divide-white/15">
+              {ROADMAP.map((item) => (
+                <div key={item.label} className="py-5 sm:px-6 sm:first:pl-0 sm:last:pr-0">
+                  <p className="inline-flex rounded-md border border-[var(--gold)]/50 px-2 py-1 text-[11px] font-semibold tracking-[0.16em] text-[var(--gold)] uppercase">
+                    {item.label}
                   </p>
-                </details>
+                  <p className="mt-4 text-sm leading-relaxed">{item.body}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-5 py-16 sm:py-20">
-            <h2 className="font-heading max-w-xl text-4xl tracking-tight sm:text-5xl">
-              Ready to show what you earn?
+        <section id="next" className="scroll-mt-20 border-t border-white/10">
+          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
+              The next step
+            </p>
+            <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
+              Ready to prove what you earn?
             </h2>
-            <Link
-              href="/sign-in"
-              className="inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
-            >
-              Get started
-            </Link>
+            <EarlyAccessForm />
           </div>
         </section>
       </main>
 
       <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:flex-row sm:justify-between">
-          <div>
-            <ManikkaWordmark />
-            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-              Income proof for people who get paid without a payslip.
+        <div className="mx-auto max-w-6xl px-5 py-10">
+          <ManikkaWordmark />
+          <nav aria-label="Footer" className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            {FOOTER_LINKS.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-foreground underline underline-offset-4 hover:text-[var(--gold)]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="mt-8 max-w-xl space-y-2 text-sm leading-relaxed text-muted-foreground">
+            <p>Manikka is a technology provider. Credit is offered by licensed lending partners.</p>
+            <p>
+              Interactive prototype. App figures and conversations are examples, not offers or
+              financial advice.
             </p>
           </div>
-          <div className="flex gap-12 text-sm">
-            <div className="space-y-2">
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Product
-              </p>
-              <a className="block text-muted-foreground hover:text-foreground" href="#product">
-                The product
-              </a>
-              <a className="block text-muted-foreground hover:text-foreground" href="#pricing">
-                Pricing
-              </a>
-              <a className="block text-muted-foreground hover:text-foreground" href="#faq">
-                Questions
-              </a>
-            </div>
-            <div className="space-y-2">
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Account
-              </p>
-              <Link className="block text-muted-foreground hover:text-foreground" href="/sign-in">
-                Sign in
-              </Link>
-              <Link className="block text-muted-foreground hover:text-foreground" href="/dashboard">
-                Dashboard
-              </Link>
-            </div>
-          </div>
         </div>
-        <p className="mx-auto max-w-6xl px-5 pb-8 text-[11px] leading-relaxed text-muted-foreground">
-          Demo only. Statement reads stay on this device and are simulated. Manikka is not a
-          licensed credit bureau, not a lender, and not an M-Pesa product.
-        </p>
       </footer>
     </div>
   )
@@ -346,32 +262,6 @@ function IncomeChart() {
         fill="currentColor"
         opacity="0.08"
       />
-    </svg>
-  )
-}
-
-function ScoreRing({ score }: { score: number }) {
-  const radius = 28
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - score / 100)
-  return (
-    <svg viewBox="0 0 72 72" className="size-16 shrink-0" role="img" aria-label={`Sample score ${score} out of 100`}>
-      <circle cx="36" cy="36" r={radius} fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="5" />
-      <circle
-        cx="36"
-        cy="36"
-        r={radius}
-        fill="none"
-        stroke="var(--gold)"
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        transform="rotate(-90 36 36)"
-      />
-      <text x="36" y="41" textAnchor="middle" fill="currentColor" fontSize="16" fontFamily="var(--font-heading), serif">
-        {score}
-      </text>
     </svg>
   )
 }

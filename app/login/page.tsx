@@ -4,7 +4,7 @@ import { AuthCard } from "@/components/auth/auth-card"
 import { LoginForm } from "@/components/auth/login-form"
 import { safeNextPath } from "@/lib/auth-redirect"
 
-export const metadata: Metadata = { title: "Log in — nest" }
+export const metadata: Metadata = { title: "Log in — Manikka" }
 
 const NOTICES: Record<string, string> = {
   link: "That link has expired or was already used. Request a new one below.",
@@ -20,7 +20,7 @@ export default async function LoginPage({
 
   return (
     <AuthCard
-      eyebrow="Creator income"
+      eyebrow="Manikka"
       title="Welcome back"
       description="Log in to see what you earned this month."
       footer={

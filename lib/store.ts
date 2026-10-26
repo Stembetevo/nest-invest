@@ -6,6 +6,7 @@ import { normalizeKenyanPhone } from "./money"
 import type { IncomeMonth, IncomeSource, ReportStatus, VeritasState } from "./types"
 
 const KEY = "veritas-v1"
+const PROFILE_KEY = "veritas-profile-v1"
 const EVENT = "veritas-store"
 
 export const defaultState: VeritasState = {
@@ -109,6 +110,15 @@ export function signIn(input: { name: string; phone: string }) {
   if (prev.phone === phone && prev.signedInAt) {
     return saveState({ ...prev, name })
   }
+  const saved = parse(isBrowser() ? window.localStorage.getItem(PROFILE_KEY) : null)
+  if (saved.phone === phone) {
+    return saveState({
+      ...saved,
+      name,
+      signedInAt: new Date().toISOString(),
+    })
+  }
+  if (isBrowser()) window.localStorage.removeItem(PROFILE_KEY)
   return saveState({
     ...defaultState,
     name,
@@ -135,6 +145,10 @@ export function shareReport() {
 }
 
 export function signOut() {
+  const prev = loadState()
+  if (isBrowser() && prev.phone && prev.signedInAt) {
+    window.localStorage.setItem(PROFILE_KEY, JSON.stringify(prev))
+  }
   persist(defaultState)
   return defaultState
 }

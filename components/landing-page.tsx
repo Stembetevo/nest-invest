@@ -291,8 +291,8 @@ export function LandingPage() {
               <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                 Product
               </p>
-              <a className="block hover:text-foreground" href="#product">
-                How it works
+              <a className="block text-muted-foreground hover:text-foreground" href="#product">
+                The product
               </a>
               <a className="block text-muted-foreground hover:text-foreground" href="#pricing">
                 Pricing

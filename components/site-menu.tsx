@@ -18,7 +18,7 @@ import { signOut, useVeritasStore } from "@/lib/store"
 
 const LINKS = [
   { href: "/#problem", label: "The problem" },
-  { href: "/#product", label: "How it works" },
+  { href: "/#product", label: "The product" },
   { href: "/#proof", label: "The report" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "Questions" },

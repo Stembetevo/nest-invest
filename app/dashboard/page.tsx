@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { VeritasWordmark } from "@/components/veritas-mark"
 import { Button } from "@/components/ui/button"
@@ -15,9 +15,10 @@ export default function DashboardPage() {
   const hydrated = useHydrated()
   const session = useVeritasStore()
   const [reading, setReading] = useState(false)
+  const signingOut = useRef(false)
 
   useEffect(() => {
-    if (hydrated && !session.signedInAt) router.replace("/sign-in")
+    if (hydrated && !session.signedInAt && !signingOut.current) router.replace("/sign-in")
   }, [hydrated, session.signedInAt, router])
 
   useEffect(() => {
@@ -31,8 +32,9 @@ export default function DashboardPage() {
   }, [reading])
 
   const leave = () => {
+    signingOut.current = true
     signOut()
-    router.push("/")
+    router.replace("/")
   }
 
   const share = () => {

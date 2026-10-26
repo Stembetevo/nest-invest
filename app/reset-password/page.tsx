@@ -6,7 +6,7 @@ import { FormAlert } from "@/components/form-alert"
 import { isSupabaseConfigured } from "@/lib/supabase/env"
 import { createClient } from "@/lib/supabase/server"
 
-export const metadata: Metadata = { title: "Choose a new password — nest" }
+export const metadata: Metadata = { title: "Choose a new password — Manikka" }
 
 async function hasRecoverySession() {
   if (!isSupabaseConfigured()) return false

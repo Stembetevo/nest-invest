@@ -1,5 +1,7 @@
 import type { ReactNode } from "react"
+import Link from "next/link"
 import { FormAlert } from "@/components/form-alert"
+import { ManikkaWordmark } from "@/components/manikka-mark"
 import { isSupabaseConfigured, SUPABASE_NOT_CONFIGURED } from "@/lib/supabase/env"
 
 export function AuthCard({
@@ -17,6 +19,9 @@ export function AuthCard({
 }) {
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
+      <Link href="/" aria-label="Manikka home">
+        <ManikkaWordmark />
+      </Link>
       <div>
         <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
           {eyebrow}

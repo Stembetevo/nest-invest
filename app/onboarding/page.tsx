@@ -5,7 +5,7 @@ import { fetchProfile, fetchSources, requireUser } from "@/lib/creator-data"
 import { nairobiTodayIso } from "@/lib/dates"
 import { resolveOnboardingStep } from "@/lib/onboarding"
 
-export const metadata: Metadata = { title: "Set up your profile — nest" }
+export const metadata: Metadata = { title: "Set up your profile — Manikka" }
 
 export default async function OnboardingPage() {
   const { supabase, user } = await requireUser("/onboarding")

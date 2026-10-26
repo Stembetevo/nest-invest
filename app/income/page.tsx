@@ -10,7 +10,7 @@ import type { IncomeEntry } from "@/lib/income"
 import { monthKeyOf } from "@/lib/income-stats"
 import { formatKes } from "@/lib/money"
 
-export const metadata: Metadata = { title: "All income — nest" }
+export const metadata: Metadata = { title: "All income — Manikka" }
 
 function groupByMonth(entries: IncomeEntry[]) {
   const groups = new Map<string, IncomeEntry[]>()

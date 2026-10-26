@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/alerts", destination: "/", permanent: false },
       { source: "/how-it-works", destination: "/", permanent: false },
-      { source: "/pledge", destination: "/sign-in", permanent: false },
+      { source: "/pledge", destination: "/signup", permanent: false },
+      { source: "/sign-in", destination: "/login", permanent: false },
       { source: "/portfolio", destination: "/dashboard", permanent: false },
     ]
   },

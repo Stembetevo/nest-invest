@@ -43,7 +43,7 @@ export function SignupForm() {
         error={errors.password}
       />
       <SubmitButton pending={pending} pendingLabel="Creating account…">
-        Create creator account
+        Create account
       </SubmitButton>
     </form>
   )

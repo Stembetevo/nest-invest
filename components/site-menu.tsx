@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,27 +13,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { signOut, useManikkaStore } from "@/lib/store"
 
 const LINKS = [
   { href: "/#problem", label: "The problem" },
-  { href: "/#product", label: "The product" },
-  { href: "/#proof", label: "The report" },
-  { href: "/#pricing", label: "Pricing" },
-  { href: "/#faq", label: "Questions" },
+  { href: "/#manikka", label: "Meet Manikka" },
+  { href: "/#privacy", label: "Privacy and control" },
+  { href: "/#lenders", label: "For lenders" },
+  { href: "/#roadmap", label: "Roadmap" },
 ]
 
 export function SiteMenu() {
-  const router = useRouter()
-  const session = useManikkaStore()
-  const signedIn = Boolean(session.signedInAt)
   const [open, setOpen] = useState(false)
-
-  const leave = () => {
-    signOut()
-    setOpen(false)
-    router.push("/")
-  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -64,26 +53,16 @@ export function SiteMenu() {
           ))}
         </nav>
         <SheetFooter>
-          {signedIn ? (
-            <>
-              <Button asChild className="h-11">
-                <SheetClose asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </SheetClose>
-              </Button>
-              <Button variant="outline" className="h-11" onClick={leave}>
-                Sign out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button asChild className="h-11">
-                <SheetClose asChild>
-                  <Link href="/sign-in">Get started</Link>
-                </SheetClose>
-              </Button>
-            </>
-          )}
+          <Button asChild className="h-11">
+            <SheetClose asChild>
+              <Link href="/signup">Get started</Link>
+            </SheetClose>
+          </Button>
+          <Button asChild variant="outline" className="h-11">
+            <SheetClose asChild>
+              <Link href="/login">Log in</Link>
+            </SheetClose>
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

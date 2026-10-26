@@ -3,13 +3,13 @@
 import { useSyncExternalStore } from "react"
 import { buildReport } from "./income"
 import { normalizeKenyanPhone } from "./money"
-import type { IncomeMonth, IncomeSource, ReportStatus, VeritasState } from "./types"
+import type { IncomeMonth, IncomeSource, ReportStatus, ManikkaState } from "./types"
 
-const KEY = "veritas-v1"
-const PROFILE_KEY = "veritas-profile-v1"
-const EVENT = "veritas-store"
+const KEY = "manikka-v1"
+const PROFILE_KEY = "manikka-profile-v1"
+const EVENT = "manikka-store"
 
-export const defaultState: VeritasState = {
+export const defaultState: ManikkaState = {
   name: "",
   phone: "",
   signedInAt: null,
@@ -22,7 +22,7 @@ export const defaultState: VeritasState = {
   sharedWithLender: false,
 }
 
-let snapshot: VeritasState = defaultState
+let snapshot: ManikkaState = defaultState
 let snapshotRaw: string | null = null
 let snapshotReady = false
 
@@ -52,10 +52,10 @@ function asSources(value: unknown): IncomeSource[] {
   )
 }
 
-function parse(raw: string | null): VeritasState {
+function parse(raw: string | null): ManikkaState {
   if (!raw) return defaultState
   try {
-    const parsed = JSON.parse(raw) as Partial<VeritasState>
+    const parsed = JSON.parse(raw) as Partial<ManikkaState>
     const reportStatus: ReportStatus = parsed.reportStatus === "verified" ? "verified" : "pending"
     return {
       ...defaultState,
@@ -76,7 +76,7 @@ function parse(raw: string | null): VeritasState {
   }
 }
 
-export function loadState(): VeritasState {
+export function loadState(): ManikkaState {
   if (!isBrowser()) return defaultState
   const raw = window.localStorage.getItem(KEY)
   if (snapshotReady && raw === snapshotRaw) return snapshot
@@ -86,7 +86,7 @@ export function loadState(): VeritasState {
   return snapshot
 }
 
-function persist(next: VeritasState) {
+function persist(next: ManikkaState) {
   snapshot = next
   snapshotRaw = JSON.stringify(next)
   snapshotReady = true
@@ -95,7 +95,7 @@ function persist(next: VeritasState) {
 }
 
 export function saveState(
-  patch: Partial<VeritasState> | ((prev: VeritasState) => VeritasState)
+  patch: Partial<ManikkaState> | ((prev: ManikkaState) => ManikkaState)
 ) {
   const prev = loadState()
   const next = typeof patch === "function" ? patch(prev) : { ...prev, ...patch }
@@ -165,7 +165,7 @@ function subscribe(onStoreChange: () => void) {
 
 const getServerSnapshot = () => defaultState
 
-export function useVeritasStore() {
+export function useManikkaStore() {
   return useSyncExternalStore(subscribe, loadState, getServerSnapshot)
 }
 

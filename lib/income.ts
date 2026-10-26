@@ -65,7 +65,7 @@ export function buildReport(phone: string) {
 }
 
 export function reportCode(phone: string) {
-  return `VRT-${hashPhone(phone).toString(36).toUpperCase().padStart(6, "0").slice(0, 6)}`
+  return `MNK-${hashPhone(phone).toString(36).toUpperCase().padStart(6, "0").slice(0, 6)}`
 }
 
 export const CREATOR_TYPES = [

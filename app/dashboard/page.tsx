@@ -4,16 +4,16 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
-import { VeritasWordmark } from "@/components/veritas-mark"
+import { ManikkaWordmark } from "@/components/manikka-mark"
 import { Button } from "@/components/ui/button"
 import { reportCode } from "@/lib/income"
 import { displayPhone, formatKes } from "@/lib/money"
-import { shareReport, signOut, useHydrated, useVeritasStore, verifyIncome } from "@/lib/store"
+import { shareReport, signOut, useHydrated, useManikkaStore, verifyIncome } from "@/lib/store"
 
 export default function DashboardPage() {
   const router = useRouter()
   const hydrated = useHydrated()
-  const session = useVeritasStore()
+  const session = useManikkaStore()
   const [reading, setReading] = useState(false)
   const signingOut = useRef(false)
 
@@ -58,8 +58,8 @@ export default function DashboardPage() {
     <div className="min-h-dvh">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-          <Link href="/" aria-label="Veritas home">
-            <VeritasWordmark />
+          <Link href="/" aria-label="Manikka home">
+            <ManikkaWordmark />
           </Link>
           <div className="flex items-center gap-3">
             <p className="hidden text-sm text-muted-foreground sm:block">Dashboard</p>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
             <section className="grid gap-4 sm:grid-cols-2">
               <article className="rounded-3xl border border-white/10 p-6">
                 <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                  Before Veritas
+                  Before Manikka
                 </p>
                 <p className="mt-3 text-sm leading-relaxed">
                   No payslip and no credit file. A lender had nothing to price.
@@ -174,7 +174,7 @@ export default function DashboardPage() {
           <section className="mt-10 max-w-xl rounded-3xl border border-white/10 p-6">
             <h2 className="font-heading text-2xl">Connect six months of inflows</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Veritas reads repeating tills, paybills, and senders, then turns them into a monthly
+              Manikka reads repeating tills, paybills, and senders, then turns them into a monthly
               income. This demo builds that file on your device. It does not contact M-Pesa and it
               never asks for a PIN.
             </p>

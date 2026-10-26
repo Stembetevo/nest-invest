@@ -1,8 +1,8 @@
-# Veritas
+# Manikka
 
-**Prove your income. Unlock credit.** Veritas turns informal earnings — tills, paybills, and regular senders — into a verified income report a lender can read. The report is free for the earner. Lenders pay for the proof.
+**Prove your income. Unlock credit.** Manikka turns informal earnings — tills, paybills, and regular senders — into a verified income report a lender can read. The report is free for the earner. Lenders pay for the proof.
 
-This repository is a **product demo**. Sign-in, the statement read, and lender sharing all stay in the browser (`localStorage`). Nothing is sent to Safaricom. Veritas is not a licensed credit bureau and not a lender.
+This repository is a **product demo**. Sign-in, the statement read, and lender sharing all stay in the browser (`localStorage`). Nothing is sent to Safaricom. Manikka is not a licensed credit bureau and not a lender.
 
 ## Run locally
 
@@ -28,4 +28,4 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 4. **Share with a lender** marks the report as shared. Sign out from the dashboard or the menu.
 5. Signing in again with the same number reopens that report.
 
-Identity is stored under `veritas-v1`.
+Identity is stored under `manikka-v1`.

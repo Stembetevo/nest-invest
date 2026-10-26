@@ -15,9 +15,9 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: "Veritas — Prove your income",
+  title: "Manikka — Prove your income",
   description:
-    "Veritas turns informal earnings into a verified income report lenders can trust. Free for you. Lenders pay for the proof.",
+    "Manikka turns informal earnings into a verified income report lenders can trust. Free for you. Lenders pay for the proof.",
 }
 
 export default function RootLayout({

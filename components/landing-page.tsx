@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { SiteMenu } from "@/components/site-menu"
-import { VeritasWordmark } from "@/components/veritas-mark"
+import { ManikkaWordmark } from "@/components/manikka-mark"
 import { SAMPLE_REPORT } from "@/lib/income"
 import { formatKes } from "@/lib/money"
 
@@ -23,7 +23,7 @@ const STEPS = [
   {
     n: "01",
     title: "Share your M-Pesa",
-    body: "You approve six months of inflows. Veritas never sees your PIN and never moves the money.",
+    body: "You approve six months of inflows. Manikka never sees your PIN and never moves the money.",
   },
   {
     n: "02",
@@ -44,7 +44,7 @@ const QUESTIONS = [
   },
   {
     q: "Do you take the money?",
-    a: "No. Veritas does not hold funds, issue the loan, or sit in the payment. Lenders pay when you approve a report.",
+    a: "No. Manikka does not hold funds, issue the loan, or sit in the payment. Lenders pay when you approve a report.",
   },
   {
     q: "Who can see my report?",
@@ -63,8 +63,8 @@ export function LandingPage() {
     <div className="min-h-dvh">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link href="/" aria-label="Veritas home">
-            <VeritasWordmark />
+          <Link href="/" aria-label="Manikka home">
+            <ManikkaWordmark />
           </Link>
           <SiteMenu />
         </div>
@@ -80,7 +80,7 @@ export function LandingPage() {
               Prove your income. Unlock credit.
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Veritas turns informal earnings into a verified income report lenders can trust.
+              Manikka turns informal earnings into a verified income report lenders can trust.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <Link
@@ -281,7 +281,7 @@ export function LandingPage() {
       <footer className="border-t border-white/10">
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:flex-row sm:justify-between">
           <div>
-            <VeritasWordmark />
+            <ManikkaWordmark />
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">
               Income proof for people who get paid without a payslip.
             </p>
@@ -315,7 +315,7 @@ export function LandingPage() {
           </div>
         </div>
         <p className="mx-auto max-w-6xl px-5 pb-8 text-[11px] leading-relaxed text-muted-foreground">
-          Demo only. Statement reads stay on this device and are simulated. Veritas is not a
+          Demo only. Statement reads stay on this device and are simulated. Manikka is not a
           licensed credit bureau, not a lender, and not an M-Pesa product.
         </p>
       </footer>

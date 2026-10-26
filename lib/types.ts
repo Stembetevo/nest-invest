@@ -10,7 +10,7 @@ export type IncomeSource = {
   share: number
 }
 
-export type VeritasState = {
+export type ManikkaState = {
   name: string
   phone: string
   signedInAt: string | null

@@ -3,7 +3,8 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { AUTH_MESSAGES, authErrorMessage } from "@/lib/auth-errors"
-import { safeNextPath } from "@/lib/auth-redirect"
+import { resolveAuthRedirect, safeNextPath } from "@/lib/auth-redirect"
+import { fetchProfile } from "@/lib/creator-data"
 import { isSupabaseConfigured, SUPABASE_NOT_CONFIGURED } from "@/lib/supabase/env"
 import { createClient } from "@/lib/supabase/server"
 import {
@@ -45,15 +46,32 @@ export async function login(_prev: AuthFormState, formData: FormData): Promise<A
   if (hasErrors(fieldErrors)) return { fieldErrors, email }
   if (!isSupabaseConfigured()) return { error: SUPABASE_NOT_CONFIGURED, email }
 
+  let destination = safeNextPath(text(formData, "next"))
   try {
     const supabase = await createClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return { error: authErrorMessage(error), email }
+    const { data } = await supabase.auth.getUser()
+    if (data.user) {
+      try {
+        const profile = await fetchProfile(supabase, data.user.id)
+        const url = new URL(destination, "http://local")
+        destination =
+          resolveAuthRedirect({
+            pathname: url.pathname,
+            search: url.search,
+            isAuthenticated: true,
+            onboardingComplete: Boolean(profile?.onboardingCompletedAt),
+          }) ?? destination
+      } catch {
+        // A profile read failure should not undo a successful login.
+      }
+    }
   } catch (error) {
     return { error: authErrorMessage(error), email }
   }
 
-  redirect(safeNextPath(text(formData, "next")))
+  redirect(destination)
 }
 
 export async function signup(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {

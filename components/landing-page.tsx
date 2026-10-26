@@ -84,7 +84,7 @@ export function LandingPage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <Link
-                href="/sign-up"
+                href="/signup"
                 className="inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
               >
                 Get started

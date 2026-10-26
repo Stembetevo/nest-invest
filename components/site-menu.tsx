@@ -79,7 +79,7 @@ export function SiteMenu() {
             <>
               <Button asChild className="h-11">
                 <SheetClose asChild>
-                  <Link href="/sign-in">Get started</Link>
+                  <Link href="/signup">Get started</Link>
                 </SheetClose>
               </Button>
             </>

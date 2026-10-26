@@ -15,9 +15,9 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: "nest — Nest Bills",
+  title: "Veritas — Prove your income",
   description:
-    "M-Pesa for Treasury Bills. Start at KSh 100, pledge in 3 taps, and earn government rates. nest routes — we don’t take the risk.",
+    "Veritas turns informal earnings into a verified income report lenders can trust. Free for you. Lenders pay for the proof.",
 }
 
 export default function RootLayout({

@@ -1,176 +1,31 @@
-# Nest Finance
+# Veritas
 
-> Financial identity infrastructure for the businesses and creators
-> traditional financial systems overlook.
+**Prove your income. Unlock credit.** Veritas turns informal earnings — tills, paybills, and regular senders — into a verified income report a lender can read. The report is free for the earner. Lenders pay for the proof.
 
-Nest Finance turns fragmented financial activity into a verified,
-portable financial identity.
+This repository is a **product demo**. Sign-in, the statement read, and lender sharing all stay in the browser (`localStorage`). Nothing is sent to Safaricom. Veritas is not a licensed credit bureau and not a lender.
 
-We help creators, informal businesses and independent professionals
-prove their income, understand their cash flow and build a financial
-record that can be shared with credit providers.
+## Run locally
 
----
+```bash
+npm install
+npm run dev
+```
 
-## The Problem
+Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
-Millions of businesses and independent workers generate real income
-without generating the financial records required by traditional
-credit systems.
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server on port **43123** |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build on 43123 |
+| `npm run lint` | ESLint |
 
-Their financial activity is fragmented across:
+## Try the demo
 
-- Mobile money
-- Bank accounts
-- Creator platforms
-- Payment processors
-- Cash
-- Informal credit
-- Business expenses
+1. The landing page is one scroll: the problem, how a report is built, a sample file, pricing, and questions.
+2. **Get started** asks for a name and a Safaricom number (`07…` or `2547…`). Any valid number works. One profile is kept on this device.
+3. **Dashboard → Share statement** simulates a six-month read. The income, score, and sources are derived from the number so the same phone always rebuilds the same file.
+4. **Share with a lender** marks the report as shared. Sign out from the dashboard or the menu.
+5. Signing in again with the same number reopens that report.
 
-The result is a paradox:
-
-> Someone can have substantial income and still have little
-> evidence of their financial capacity.
-
-Nest is designed to solve the evidence problem.
-
----
-
-## What Nest Does
-
-Nest aggregates and normalizes financial activity from multiple
-sources and converts it into a Financial Identity.
-
-The system tracks:
-
-- Income
-- Expenses
-- Cash flow
-- Profitability
-- Debt
-- Repayment history
-- Income consistency
-
-Nest then uses AI to explain the financial data and identify
-potential financial risks and opportunities.
-
----
-
-## MVP
-
-The first version of Nest focuses on one core capability:
-
-### Proving income.
-
-Users can connect or import financial data from supported sources,
-including:
-
-- M-Pesa
-- Bank accounts
-- Stripe
-- CSV files
-- Manual records
-
-Nest normalizes this data into a unified financial ledger.
-
-From that ledger we generate:
-
-### Financial Profile
-
-- Verified income
-- Average monthly income
-- Income consistency
-- Monthly expenses
-- Estimated profitability
-- Cash-flow stability
-- Existing debt
-- Repayment history
-
----
-
-## Manikka
-
-Manikka is Nest's AI CFO.
-
-Manikka analyzes a user's financial activity and provides
-contextual financial insights.
-
-Examples include:
-
-- Cash-flow warnings
-- Expense anomalies
-- Profitability analysis
-- Income trends
-- Debt affordability
-- Financial recommendations
-
-Manikka does not replace the Financial Identity.
-
-It interprets it.
-
----
-
-## Financial Identity
-
-The Financial Identity is the core Nest primitive.
-
-A user's Financial Identity represents their financial history in a
-structured and verifiable format.
-
-It can eventually be used by authorized third parties such as:
-
-- Lenders
-- SACCOs
-- Financial institutions
-- Payment providers
-- Credit platforms
-
-Users control when and with whom their financial information is shared.
-
----
-
-## Credit Infrastructure
-
-Nest is not initially the lender.
-
-Instead, Nest provides financial intelligence to lending partners.
-
-The flow is:
-
-User
-→ Financial Data
-→ Nest Financial Identity
-→ Consent
-→ Lending Partner
-→ Credit Decision
-
-This allows Nest to build the financial identity layer before
-becoming involved in capital provision.
-
----
-
-## Data Architecture
-
-```text
-Financial Sources
-       |
-       v
-Data Connectors
-       |
-       v
-Transaction Normalization
-       |
-       v
-Financial Ledger
-       |
-       +------> Financial Analytics
-       |
-       +------> Financial Identity
-       |
-       +------> Manikka AI CFO
-       |
-       +------> Credit Profile
-       |
-       v
-Authorized Financial Partners
+Identity is stored under `veritas-v1`.

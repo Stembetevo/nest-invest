@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { signOut, useVeritasStore } from "@/lib/store"
+import { signOut, useManikkaStore } from "@/lib/store"
 
 const LINKS = [
   { href: "/#problem", label: "The problem" },
@@ -26,7 +26,7 @@ const LINKS = [
 
 export function SiteMenu() {
   const router = useRouter()
-  const session = useVeritasStore()
+  const session = useManikkaStore()
   const signedIn = Boolean(session.signedInAt)
   const [open, setOpen] = useState(false)
 
@@ -48,7 +48,7 @@ export function SiteMenu() {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Veritas</SheetTitle>
+          <SheetTitle>Manikka</SheetTitle>
           <SheetDescription>Income proof for credit.</SheetDescription>
         </SheetHeader>
         <nav aria-label="Sections" className="flex flex-col gap-1 px-4">

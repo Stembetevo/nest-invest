@@ -3,17 +3,17 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
-import { VeritasWordmark } from "@/components/veritas-mark"
+import { ManikkaWordmark } from "@/components/manikka-mark"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { isValidKenyanPhone } from "@/lib/money"
-import { signIn, useHydrated, useVeritasStore } from "@/lib/store"
+import { signIn, useHydrated, useManikkaStore } from "@/lib/store"
 
 export default function SignInPage() {
   const router = useRouter()
   const hydrated = useHydrated()
-  const session = useVeritasStore()
+  const session = useManikkaStore()
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [error, setError] = useState("")
@@ -41,8 +41,8 @@ export default function SignInPage() {
     <div className="min-h-dvh">
       <header className="border-b border-white/10">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-5">
-          <Link href="/" aria-label="Veritas home">
-            <VeritasWordmark />
+          <Link href="/" aria-label="Manikka home">
+            <ManikkaWordmark />
           </Link>
         </div>
       </header>

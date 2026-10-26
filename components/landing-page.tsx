@@ -305,8 +305,8 @@ export function LandingPage() {
               <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                 Account
               </p>
-              <Link className="block text-muted-foreground hover:text-foreground" href="/sign-in">
-                Sign in
+              <Link className="block text-muted-foreground hover:text-foreground" href="/signup">
+                Sign up
               </Link>
               <Link className="block text-muted-foreground hover:text-foreground" href="/dashboard">
                 Dashboard

@@ -8,6 +8,7 @@ import { ManikkaCard } from "@/components/dashboard/manikka-card"
 import { MonthSummaryCard } from "@/components/dashboard/month-summary-card"
 import { ProfileProgressCard } from "@/components/dashboard/profile-progress-card"
 import { RecentIncome } from "@/components/dashboard/recent-income"
+import { StripeIncomeCard } from "@/components/dashboard/stripe-income-card"
 import { Button } from "@/components/ui/button"
 import { fetchEntries, fetchProfile, fetchSources, requireUser } from "@/lib/creator-data"
 import {
@@ -21,15 +22,17 @@ import {
   verifiedProfileSteps,
 } from "@/lib/income-stats"
 import { resolveOnboardingStep } from "@/lib/onboarding"
+import { stripeConnectionStatus } from "@/lib/stripe-data"
 
 export const metadata: Metadata = { title: "Your income — Manikka" }
 
 export default async function DashboardPage() {
   const { supabase, user } = await requireUser("/dashboard")
-  const [profile, sources, entries] = await Promise.all([
+  const [profile, sources, entries, stripe] = await Promise.all([
     fetchProfile(supabase, user.id),
     fetchSources(supabase),
     fetchEntries(supabase),
+    stripeConnectionStatus(user.id),
   ])
   if (!profile) throw new Error("Profile missing")
   if (resolveOnboardingStep(profile, sources.length) !== "complete") redirect("/onboarding")
@@ -76,6 +79,7 @@ export default async function DashboardPage() {
       </div>
 
       <RecentIncome entries={entries.slice(0, 5)} />
+      <StripeIncomeCard connected={stripe.connected} accountId={stripe.connected ? stripe.accountId : undefined} />
       <ComingSoonCard />
     </div>
   )

@@ -28,6 +28,9 @@ create table if not exists public.stripe_transactions (
   unique (user_id, stripe_transaction_id)
 );
 
+create index if not exists stripe_transactions_user_created_idx
+  on public.stripe_transactions (user_id, stripe_created_at desc);
+
 alter table public.stripe_connections enable row level security;
 alter table public.stripe_transactions enable row level security;
 

@@ -20,7 +20,10 @@ export async function GET(request: NextRequest) {
     !state ||
     !savedState ||
     state.length !== savedState.length ||
-    !timingSafeEqual(Buffer.from(state), Buffer.from(savedState))
+    !timingSafeEqual(
+      new TextEncoder().encode(state),
+      new TextEncoder().encode(savedState)
+    )
   ) {
     return errorRedirect("The Stripe connection request expired. Please try again.")
   }

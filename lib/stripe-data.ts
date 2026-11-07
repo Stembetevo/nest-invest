@@ -125,15 +125,38 @@ export async function syncStripeTransactions(userId: string, months: number) {
 }
 
 export async function fetchStripeTransactions(userId: string, limit: number) {
+  return fetchStripeTransactionHistory(userId, { limit })
+}
+
+export async function fetchStripeTransactionHistory(
+  userId: string,
+  input: { limit: number; from?: string; to?: string }
+) {
   const admin = createAdminClient()
-  const { data, error } = await admin
+  let query = admin
     .from("stripe_transactions")
     .select(
       "stripe_transaction_id, transaction_type, amount, fee, net, currency, status, available_on, stripe_created_at, description, source_id"
     )
     .eq("user_id", userId)
     .order("stripe_created_at", { ascending: false })
-    .limit(limit)
+    .limit(input.limit)
+
+  if (input.from) query = query.gte("stripe_created_at", `${input.from}T00:00:00.000Z`)
+  if (input.to) query = query.lt("stripe_created_at", `${input.to}T23:59:59.999Z`)
+
+  const { data, error } = await query
   if (error) throw new Error(`Could not load Stripe transactions: ${error.message}`)
-  return data ?? []
+
+  const transactions = data ?? []
+  const summary = transactions.reduce(
+    (totals, transaction) => {
+      if (transaction.net >= 0) totals.in += transaction.net
+      else totals.out += Math.abs(transaction.net)
+      return totals
+    },
+    { in: 0, out: 0 }
+  )
+
+  return { transactions, summary }
 }

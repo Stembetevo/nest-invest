@@ -41,6 +41,21 @@ export function stripeClient(accessToken: string) {
   return new Stripe(accessToken)
 }
 
+/** Platform secret used for Financial Connections. Connect OAuth stores this same key as the client secret. */
+export function stripeSecretKey() {
+  return process.env.STRIPE_SECRET_KEY || process.env.STRIPE_CONNECT_CLIENT_SECRET || null
+}
+
+export function stripePublishableKey() {
+  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.STRIPE_PUBLISHABLE_KEY || null
+}
+
+export function platformStripe() {
+  const secret = stripeSecretKey()
+  if (!secret) return null
+  return new Stripe(secret)
+}
+
 export function stripeRedirectUri(origin: string) {
   return process.env.STRIPE_CONNECT_REDIRECT_URI ?? `${origin}/api/stripe/callback`
 }

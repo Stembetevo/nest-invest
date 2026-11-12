@@ -1,22 +1,15 @@
 import type { OnboardingStep, Profile } from "./income"
 
-export const ONBOARDING_STEPS: Record<OnboardingStep, string> = {
+export const ONBOARDING_STEPS: Record<1, string> = {
   1: "Your profile",
-  2: "Income sources",
-  3: "First entry",
 }
 
-export const ONBOARDING_STEP_COUNT = 3
+export const ONBOARDING_STEP_COUNT = 1
 
-/**
- * The step to show when the user returns. Uses the saved step, but never skips past a step
- * whose data is missing (for example if sources were removed after step 2 was saved).
- */
-export function resolveOnboardingStep(profile: Profile, sourceCount: number): OnboardingStep | "complete" {
-  if (profile.onboardingCompletedAt) return "complete"
-  if (profile.onboardingStep >= 2 && (!profile.displayName || !profile.creatorType)) return 1
-  if (profile.onboardingStep === 3 && sourceCount === 0) return 2
-  return profile.onboardingStep
+/** Profile name and creator type are enough. A saved completion stamp also counts. */
+export function resolveOnboardingStep(profile: Profile): OnboardingStep | "complete" {
+  if (profile.onboardingCompletedAt || (profile.displayName && profile.creatorType)) return "complete"
+  return 1
 }
 
 /** Saved progress only moves forward, so going back to edit an earlier step keeps later progress. */

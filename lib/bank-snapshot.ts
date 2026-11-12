@@ -33,4 +33,5 @@ export type BankSnapshot = {
   transactions: BankTransactionView[]
   assessment: CreditAssessment | null
   refreshPending: boolean
+  setupMessage: string | null
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { saveProfileStep, type OnboardingFormState } from "@/app/onboarding/actions"
+import { saveProfileStep } from "@/app/onboarding/actions"
 import { ChoiceChip } from "@/components/choice-chip"
 import { FormAlert } from "@/components/form-alert"
 import { FieldError, FormField } from "@/components/form-field"
@@ -11,24 +11,9 @@ import { parseProfileStep } from "@/lib/validation"
 
 export type ProfileValues = { displayName: string; creatorType: CreatorType | null }
 
-export function ProfileStep({
-  initial,
-  onDone,
-}: {
-  initial: ProfileValues
-  onDone: (values: ProfileValues) => void
-}) {
+export function ProfileStep({ initial }: { initial: ProfileValues }) {
   const { formAction, pending, onSubmit, errors, serverError } = useValidatedAction(
-    async (prev: OnboardingFormState, formData: FormData) => {
-      const result = await saveProfileStep(prev, formData)
-      if (result.ok) {
-        onDone({
-          displayName: formText(formData, "displayName").trim(),
-          creatorType: formText(formData, "creatorType") as CreatorType,
-        })
-      }
-      return result
-    },
+    saveProfileStep,
     {},
     (formData) => {
       const parsed = parseProfileStep({
@@ -70,7 +55,7 @@ export function ProfileStep({
         <FieldError id="creatorType-error" message={errors.creatorType} />
       </fieldset>
       <SubmitButton pending={pending} pendingLabel="Saving…">
-        Continue
+        Go to dashboard
       </SubmitButton>
     </form>
   )

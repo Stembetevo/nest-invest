@@ -10,7 +10,7 @@ import {
   type CreditAssessment,
   type CreditVerdict,
 } from "@/lib/creditworthiness"
-import { platformStripe, stripePublishableKey, stripeSecretKey } from "@/lib/stripe"
+import { platformStripe, stripePublishableKey, stripeSecretKey, stripeSetupMessage } from "@/lib/stripe"
 
 export class FinancialConnectionsError extends Error {
   constructor(
@@ -28,13 +28,14 @@ type ConnectionRow = {
   latest_session_id: string | null
 }
 
-const emptySnapshot = (configured: boolean): BankSnapshot => ({
+const emptySnapshot = (configured: boolean, setupMessage: string | null = null): BankSnapshot => ({
   configured,
   linked: false,
   accounts: [],
   transactions: [],
   assessment: null,
   refreshPending: false,
+  setupMessage,
 })
 
 function requirePlatformStripe() {
@@ -437,6 +438,7 @@ async function readStoredSnapshot(userId: string): Promise<BankSnapshot> {
     transactions,
     assessment,
     refreshPending,
+    setupMessage: null,
   }
 }
 
@@ -446,22 +448,27 @@ function present(snapshot: BankSnapshot): BankSnapshot {
 
 export async function loadBankSnapshot(userId: string) {
   if (!stripeSecretKey() || !stripePublishableKey()) return emptySnapshot(false)
-  const snapshot = await readStoredSnapshot(userId)
-  if (!snapshot.refreshPending) return present(snapshot)
-
-  const pendingIds = snapshot.accounts
-    .filter(
-      (account) =>
-        account.balanceRefreshStatus === "pending" || account.transactionRefreshStatus === "pending"
-    )
-    .map((account) => account.id)
   try {
-    for (const accountId of pendingIds) {
-      await ingestFinancialAccount(accountId, false)
+    const snapshot = await readStoredSnapshot(userId)
+    if (!snapshot.refreshPending) return present(snapshot)
+
+    const pendingIds = snapshot.accounts
+      .filter(
+        (account) =>
+          account.balanceRefreshStatus === "pending" || account.transactionRefreshStatus === "pending"
+      )
+      .map((account) => account.id)
+    try {
+      for (const accountId of pendingIds) {
+        await ingestFinancialAccount(accountId, false)
+      }
+      return present(await readStoredSnapshot(userId))
+    } catch (error) {
+      console.error("Bank refresh follow-up failed", error)
+      return present(snapshot)
     }
-    return present(await readStoredSnapshot(userId))
   } catch (error) {
-    console.error("Bank refresh follow-up failed", error)
-    return present(snapshot)
+    console.error("Bank snapshot lookup failed", error)
+    return emptySnapshot(true, stripeSetupMessage(error))
   }
 }

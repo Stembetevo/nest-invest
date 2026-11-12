@@ -1,7 +1,7 @@
-import type { OnboardingStep } from "@/lib/income"
 import { ONBOARDING_STEP_COUNT, ONBOARDING_STEPS } from "@/lib/onboarding"
 
-export function StepProgress({ step }: { step: OnboardingStep }) {
+export function StepProgress() {
+  const step = 1
   const label = `Step ${step} of ${ONBOARDING_STEP_COUNT}`
   return (
     <div className="space-y-2">

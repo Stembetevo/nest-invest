@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { signOut } from "@/app/auth/actions"
 import { ManikkaWordmark } from "@/components/manikka-mark"
 
-const CREATOR_ROUTES = ["/dashboard", "/income", "/onboarding"]
+const CREATOR_ROUTES = ["/dashboard", "/onboarding"]
 
 function inRoutes(pathname: string, routes: string[]) {
   return routes.some((route) => pathname === route || pathname.startsWith(`${route}/`))

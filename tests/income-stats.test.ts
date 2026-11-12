@@ -110,23 +110,14 @@ describe("chart series", () => {
 })
 
 describe("verifiedProfileSteps", () => {
-  it("counts steps from real data", () => {
-    const steps = verifiedProfileSteps({
-      profile: { displayName: "Wanjiru", creatorType: "youtuber" },
-      sourceCount: 2,
-      entries: [entry("2026-10-01", 100)],
-    })
-    expect(steps.filter((step) => step.done).length).toBe(4)
-    expect(steps.find((step) => step.id === "two-months")?.done).toBe(false)
+  it("counts a named creator as done", () => {
+    const steps = verifiedProfileSteps({ displayName: "Wanjiru", creatorType: "youtuber" })
+    expect(steps.every((step) => step.done)).toBe(true)
   })
 
-  it("is 0 of 5 for an empty profile", () => {
-    const steps = verifiedProfileSteps({
-      profile: { displayName: null, creatorType: null },
-      sourceCount: 0,
-      entries: [],
-    })
-    expect(steps).toHaveLength(5)
+  it("is 0 of 2 for an empty profile", () => {
+    const steps = verifiedProfileSteps({ displayName: null, creatorType: null })
+    expect(steps).toHaveLength(2)
     expect(steps.every((step) => !step.done)).toBe(true)
   })
 })

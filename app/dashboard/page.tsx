@@ -1,89 +1,45 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Plus } from "lucide-react"
-import { ComingSoonCard } from "@/components/dashboard/coming-soon-card"
-import { IncomeChart } from "@/components/dashboard/income-chart"
-import { ManikkaCard } from "@/components/dashboard/manikka-card"
-import { MonthSummaryCard } from "@/components/dashboard/month-summary-card"
-import { ProfileProgressCard } from "@/components/dashboard/profile-progress-card"
-import { RecentIncome } from "@/components/dashboard/recent-income"
 import { BankAccountsCard } from "@/components/dashboard/bank-accounts-card"
+import { ComingSoonCard } from "@/components/dashboard/coming-soon-card"
+import { ProfileProgressCard } from "@/components/dashboard/profile-progress-card"
 import { StripeIncomeCard } from "@/components/dashboard/stripe-income-card"
-import { Button } from "@/components/ui/button"
-import { fetchEntries, fetchProfile, fetchSources, requireUser } from "@/lib/creator-data"
-import {
-  currentMonthKey,
-  incomeByMonth,
-  incomeBySource,
-  manikkaInsight,
-  monthOverMonth,
-  shiftMonthKey,
-  totalForMonth,
-  verifiedProfileSteps,
-} from "@/lib/income-stats"
-import { resolveOnboardingStep } from "@/lib/onboarding"
+import { fetchProfile, requireUser } from "@/lib/creator-data"
+import { verifiedProfileSteps } from "@/lib/income-stats"
 import { loadBankSnapshot } from "@/lib/financial-connections"
+import { resolveOnboardingStep } from "@/lib/onboarding"
 import { stripeConnectionStatus } from "@/lib/stripe-data"
 
 export const metadata: Metadata = { title: "Your income — Manikka" }
 
 export default async function DashboardPage() {
   const { supabase, user } = await requireUser("/dashboard")
-  const [profile, sources, entries, stripe, bank] = await Promise.all([
+  const [profile, stripe, bank] = await Promise.all([
     fetchProfile(supabase, user.id),
-    fetchSources(supabase),
-    fetchEntries(supabase),
     stripeConnectionStatus(user.id),
     loadBankSnapshot(user.id),
   ])
   if (!profile) throw new Error("Profile missing")
-  if (resolveOnboardingStep(profile, sources.length) !== "complete") redirect("/onboarding")
-
-  const now = new Date()
-  const thisMonth = currentMonthKey(now)
-  const change = monthOverMonth(
-    totalForMonth(entries, thisMonth),
-    totalForMonth(entries, shiftMonthKey(thisMonth, -1))
-  )
-  const months = incomeByMonth(entries, now)
-  const bySource = incomeBySource(
-    entries,
-    months.map((month) => month.key)
-  )
+  if (resolveOnboardingStep(profile) !== "complete") redirect("/onboarding")
 
   return (
     <div className="space-y-5">
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
-            Your income
-          </p>
-          <h1 className="font-heading mt-1 text-3xl tracking-tight">
-            Habari{profile.displayName ? `, ${profile.displayName}` : ""}
-          </h1>
-        </div>
-        <Button asChild size="lg" variant="outline" className="h-10">
-          <Link href="/income#add">
-            <Plus aria-hidden="true" />
-            Add income
-          </Link>
-        </Button>
+      <div>
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
+          Your income
+        </p>
+        <h1 className="font-heading mt-1 text-3xl tracking-tight">
+          Habari{profile.displayName ? `, ${profile.displayName}` : ""}
+        </h1>
       </div>
 
-      <MonthSummaryCard monthKey={thisMonth} change={change} />
-      <IncomeChart months={months} sources={bySource} />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <ManikkaCard insight={manikkaInsight(entries, now)} />
-        <ProfileProgressCard
-          steps={verifiedProfileSteps({ profile, sourceCount: sources.length, entries })}
-        />
-      </div>
-
-      <RecentIncome entries={entries.slice(0, 5)} />
+      <ProfileProgressCard steps={verifiedProfileSteps(profile)} />
       <BankAccountsCard initial={bank} />
-      <StripeIncomeCard connected={stripe.connected} accountId={stripe.connected ? stripe.accountId : undefined} />
+      <StripeIncomeCard
+        connected={stripe.connected}
+        accountId={stripe.connected ? stripe.accountId : undefined}
+        setupMessage={stripe.setupMessage}
+      />
       <ComingSoonCard />
     </div>
   )

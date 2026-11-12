@@ -56,6 +56,18 @@ export function platformStripe() {
   return new Stripe(secret)
 }
 
+/** A message for the dashboard when a Stripe lookup cannot run. A missing connection is not an error. */
+export function stripeSetupMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : ""
+  if (message.includes("service-role")) {
+    return "Add SUPABASE_SERVICE_ROLE_KEY so linked accounts can be stored."
+  }
+  if (/does not exist|schema cache|Could not find the table/i.test(message)) {
+    return "Apply the Stripe migrations in Supabase before linking an account."
+  }
+  return "Stripe data could not be loaded. Check the server configuration."
+}
+
 export function stripeRedirectUri(origin: string) {
   return process.env.STRIPE_CONNECT_REDIRECT_URI ?? `${origin}/api/stripe/callback`
 }

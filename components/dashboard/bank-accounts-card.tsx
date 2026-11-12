@@ -133,6 +133,7 @@ export function BankAccountsCard({ initial }: { initial: BankSnapshot }) {
           Link a checking or savings account. Stripe collects consent, then Manikka reads balances and posted
           transactions to estimate creditworthiness.
         </p>
+        {snapshot.setupMessage ? <p className="mt-2 text-sm text-destructive">{snapshot.setupMessage}</p> : null}
         <Button type="button" className="mt-3" onClick={link} disabled={status === "linking" || status === "syncing"}>
           {status === "linking" ? "Opening Stripe…" : status === "syncing" ? "Saving accounts…" : "Link bank account"}
         </Button>

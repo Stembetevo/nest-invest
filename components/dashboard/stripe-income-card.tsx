@@ -96,6 +96,9 @@ export function StripeIncomeCard({ connected, accountId, initialError, setupMess
         <p className="text-sm font-semibold">Stripe income history</p>
         <p className="mt-1 text-sm text-muted-foreground">Connect Stripe to import income evidence.</p>
         {setupMessage ? <p className="mt-2 text-sm text-destructive">{setupMessage}</p> : null}
+        {message && message !== setupMessage ? (
+          <p className="mt-2 text-sm text-destructive">{message}</p>
+        ) : null}
         <Button asChild className="mt-3"><a href="/api/stripe/connect">Connect Stripe</a></Button>
       </section>
     )

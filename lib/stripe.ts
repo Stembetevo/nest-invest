@@ -62,9 +62,13 @@ export function stripeSetupMessage(error: unknown) {
   if (message.includes("service-role")) {
     return "Add SUPABASE_SERVICE_ROLE_KEY so linked accounts can be stored."
   }
+  if (message.includes("STRIPE_TOKEN_ENCRYPTION_KEY")) {
+    return "STRIPE_TOKEN_ENCRYPTION_KEY must be a base64-encoded 32-byte key. Generate one with openssl rand -base64 32."
+  }
   if (/does not exist|schema cache|Could not find the table/i.test(message)) {
     return "Apply the Stripe migrations in Supabase before linking an account."
   }
+  if (message.startsWith("Could not load Stripe connection:")) return message
   return "Stripe data could not be loaded. Check the server configuration."
 }
 

@@ -12,7 +12,13 @@ import { stripeConnectionStatus } from "@/lib/stripe-data"
 
 export const metadata: Metadata = { title: "Your income — Manikka" }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ stripe_error?: string | string[] }>
+}) {
+  const params = await searchParams
+  const stripeError = Array.isArray(params.stripe_error) ? params.stripe_error[0] : params.stripe_error
   const { supabase, user } = await requireUser("/dashboard")
   const [profile, stripe, bank] = await Promise.all([
     fetchProfile(supabase, user.id),
@@ -38,6 +44,7 @@ export default async function DashboardPage() {
       <StripeIncomeCard
         connected={stripe.connected}
         accountId={stripe.connected ? stripe.accountId : undefined}
+        initialError={stripeError}
         setupMessage={stripe.setupMessage}
       />
       <ComingSoonCard />

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto"
 import { describe, expect, it, vi } from "vitest"
-import { decryptStripeToken, encryptStripeToken } from "@/lib/stripe"
+import { decryptStripeToken, encryptStripeToken, stripeRedirectUri } from "@/lib/stripe"
 
 vi.mock("server-only", () => ({}))
 
@@ -13,6 +13,21 @@ describe("Stripe token encryption", () => {
 
     expect(encrypted).not.toContain(token)
     expect(decryptStripeToken(encrypted, key)).toBe(token)
+  })
+
+  it("keeps the Stripe callback on the site that started Connect", () => {
+    const previous = process.env.STRIPE_CONNECT_REDIRECT_URI
+    process.env.STRIPE_CONNECT_REDIRECT_URI = "https://nestinvest.xyz/api/stripe/callback"
+
+    expect(stripeRedirectUri("https://nestfinance.xyz")).toBe(
+      "https://nestfinance.xyz/api/stripe/callback"
+    )
+    expect(stripeRedirectUri("https://nestinvest.xyz")).toBe(
+      "https://nestinvest.xyz/api/stripe/callback"
+    )
+
+    if (previous === undefined) delete process.env.STRIPE_CONNECT_REDIRECT_URI
+    else process.env.STRIPE_CONNECT_REDIRECT_URI = previous
   })
 
   it("rejects a token encrypted with a different key", () => {

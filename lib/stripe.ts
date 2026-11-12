@@ -73,7 +73,16 @@ export function stripeSetupMessage(error: unknown) {
 }
 
 export function stripeRedirectUri(origin: string) {
-  return process.env.STRIPE_CONNECT_REDIRECT_URI ?? `${origin}/api/stripe/callback`
+  const fallback = `${origin}/api/stripe/callback`
+  const configured = process.env.STRIPE_CONNECT_REDIRECT_URI
+  if (!configured) return fallback
+  try {
+    if (new URL(configured).origin === new URL(origin).origin) return configured
+  } catch {
+    return fallback
+  }
+  // A redirect URI on another host sends Stripe to a site that does not serve this app.
+  return fallback
 }
 
 export function encryptStripeToken(token: string, key: Uint8Array<ArrayBufferLike>) {

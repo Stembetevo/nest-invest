@@ -52,7 +52,7 @@ export function FirstEntryStep({
         Save and finish
       </SubmitButton>
       <div className="flex gap-3">
-        <Button type="button" variant="outline" size="lg" className="h-11 px-5" onClick={onBack}>
+        <Button type="button" variant="outline" size="lg" className="px-6" onClick={onBack}>
           Back
         </Button>
         <Button
@@ -61,7 +61,7 @@ export function FirstEntryStep({
           value="skip"
           variant="ghost"
           size="lg"
-          className="h-11 flex-1"
+          className="flex-1"
           disabled={pending}
         >
           {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}

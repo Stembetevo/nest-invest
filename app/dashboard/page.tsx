@@ -1,15 +1,6 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Plus } from "lucide-react"
-import { ComingSoonCard } from "@/components/dashboard/coming-soon-card"
-import { IncomeChart } from "@/components/dashboard/income-chart"
-import { ManikkaCard } from "@/components/dashboard/manikka-card"
-import { MonthSummaryCard } from "@/components/dashboard/month-summary-card"
-import { ProfileProgressCard } from "@/components/dashboard/profile-progress-card"
-import { RecentIncome } from "@/components/dashboard/recent-income"
-import { StripeIncomeCard } from "@/components/dashboard/stripe-income-card"
-import { Button } from "@/components/ui/button"
+import { DashboardView } from "@/components/dashboard/dashboard-view"
 import { fetchEntries, fetchProfile, fetchSources, requireUser } from "@/lib/creator-data"
 import {
   currentMonthKey,
@@ -49,38 +40,31 @@ export default async function DashboardPage() {
     months.map((month) => month.key)
   )
 
+  const steps = verifiedProfileSteps({ profile, sourceCount: sources.length, entries })
+  const average = months.reduce((sum, month) => sum + month.total, 0) / Math.max(months.length, 1)
+  const hour = Number(new Intl.DateTimeFormat("en-KE", { hour: "numeric", hour12: false, timeZone: "Africa/Nairobi" }).format(now)) % 24
+  const greeting = hour < 12 ? "Habari za asubuhi" : hour < 17 ? "Habari za mchana" : "Habari za jioni"
+  const subline =
+    entries.length === 0
+      ? "Nothing logged yet. Add your first payment and we will take it from there."
+      : "Here is how your money is moving. Keep adding what comes in, and your report gets stronger."
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
-            Your income
-          </p>
-          <h1 className="font-heading mt-1 text-3xl tracking-tight">
-            Habari{profile.displayName ? `, ${profile.displayName}` : ""}
-          </h1>
-        </div>
-        <Button asChild size="lg" variant="outline" className="h-10">
-          <Link href="/income#add">
-            <Plus aria-hidden="true" />
-            Add income
-          </Link>
-        </Button>
-      </div>
-
-      <MonthSummaryCard monthKey={thisMonth} change={change} />
-      <IncomeChart months={months} sources={bySource} />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <ManikkaCard insight={manikkaInsight(entries, now)} />
-        <ProfileProgressCard
-          steps={verifiedProfileSteps({ profile, sourceCount: sources.length, entries })}
-        />
-      </div>
-
-      <RecentIncome entries={entries.slice(0, 5)} />
-      <StripeIncomeCard connected={stripe.connected} accountId={stripe.connected ? stripe.accountId : undefined} />
-      <ComingSoonCard />
-    </div>
+    <DashboardView
+      today={now.toLocaleDateString("en-KE", { weekday: "long", day: "numeric", month: "long" })}
+      greeting={greeting}
+      displayName={profile.displayName}
+      subline={subline}
+      monthKey={thisMonth}
+      change={change}
+      average={average}
+      sourceCount={sources.length}
+      steps={steps}
+      months={months}
+      bySource={bySource}
+      recent={entries.slice(0, 4)}
+      insight={manikkaInsight(entries, now)}
+      stripe={stripe.connected ? { connected: true, accountId: stripe.accountId } : { connected: false }}
+    />
   )
 }

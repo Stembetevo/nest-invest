@@ -91,10 +91,12 @@ export function StripeIncomeCard({ connected, accountId, initialError }: {
 
   if (!connected) {
     return (
-      <section className="rounded-2xl border border-primary/25 bg-primary/5 px-4 py-4">
-        <p className="text-sm font-semibold">Stripe income history</p>
-        <p className="mt-1 text-sm text-muted-foreground">Connect Stripe to import income evidence.</p>
-        <Button asChild className="mt-3"><a href="/api/stripe/connect">Connect Stripe</a></Button>
+      <section className="flex items-center justify-between gap-4 rounded-3xl border border-primary/25 bg-primary/5 px-6 py-6">
+        <div>
+          <p className="font-heading text-lg leading-tight">Stripe income history</p>
+          <p className="mt-1.5 text-sm text-muted-foreground">Connect Stripe to import income evidence.</p>
+        </div>
+        <Button asChild size="lg" className="shrink-0"><a href="/api/stripe/connect">Connect</a></Button>
       </section>
     )
   }

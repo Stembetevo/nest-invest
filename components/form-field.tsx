@@ -13,11 +13,11 @@ export function FormField({ id, label, error, hint, className, ...props }: FormF
   const hintId = hint ? `${id}-hint` : undefined
   const errorId = error ? `${id}-error` : undefined
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
-        className={className ?? "h-11"}
+        className={className}
         aria-invalid={error ? true : undefined}
         aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
         {...props}

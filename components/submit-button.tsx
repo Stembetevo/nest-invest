@@ -20,7 +20,7 @@ export function SubmitButton({
     <Button
       type="submit"
       size="lg"
-      className={cn("h-11 w-full text-base", className)}
+      className={cn("w-full", className)}
       disabled={pending || disabled}
       aria-busy={pending || undefined}
       {...props}

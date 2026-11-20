@@ -3,6 +3,7 @@
 import { signup } from "@/app/auth/actions"
 import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
+import { PasswordField } from "@/components/auth/password-field"
 import { SubmitButton } from "@/components/submit-button"
 import { MIN_PASSWORD_LENGTH, validateSignupForm } from "@/lib/validation"
 import { formText, useValidatedAction } from "@/components/use-validated-action"
@@ -33,17 +34,20 @@ export function SignupForm() {
         defaultValue={state.email}
         error={errors.email}
       />
-      <FormField
+      <PasswordField
         id="password"
         name="password"
-        type="password"
         label="Password"
         autoComplete="new-password"
+        showStrength
         hint={`At least ${MIN_PASSWORD_LENGTH} characters. Mix letters and numbers.`}
         error={errors.password}
       />
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        By creating an account you agree to our terms and privacy policy.
+      </p>
       <SubmitButton pending={pending} pendingLabel="Creating account…">
-        Create creator account
+        Create free account
       </SubmitButton>
     </form>
   )

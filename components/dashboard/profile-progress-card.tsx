@@ -3,17 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { ProfileStepStatus } from "@/lib/income-stats"
 import { cn } from "@/lib/utils"
 
-export function ProfileProgressCard({ steps }: { steps: ProfileStepStatus[] }) {
+export function ProfileProgressCard({ steps, className }: { steps: ProfileStepStatus[]; className?: string }) {
   const done = steps.filter((step) => step.done).length
   const label = `${done} of ${steps.length} steps done`
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-lg">Verified income profile</CardTitle>
         <CardDescription>{label}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5">
         <div
           role="progressbar"
           aria-label="Verified income profile progress"
@@ -21,20 +21,20 @@ export function ProfileProgressCard({ steps }: { steps: ProfileStepStatus[] }) {
           aria-valuemax={steps.length}
           aria-valuenow={done}
           aria-valuetext={label}
-          className="h-2 overflow-hidden rounded-full bg-muted"
+          className="h-2.5 overflow-hidden rounded-full bg-muted"
         >
           <div
-            className="h-full rounded-full bg-primary"
+            className="grow-x h-full rounded-full bg-primary"
             style={{ width: `${(done / steps.length) * 100}%` }}
           />
         </div>
-        <ul className="space-y-2">
+        <ul className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
           {steps.map((step) => {
             const Icon = step.done ? CircleCheck : Circle
             return (
-              <li key={step.id} className="flex items-center gap-2 text-sm">
+              <li key={step.id} className="flex items-center gap-3 text-sm">
                 <Icon
-                  className={cn("size-4 shrink-0", step.done ? "text-primary" : "text-muted-foreground")}
+                  className={cn("size-5 shrink-0", step.done ? "text-primary" : "text-muted-foreground")}
                   aria-hidden="true"
                 />
                 <span className={step.done ? "text-foreground" : "text-muted-foreground"}>

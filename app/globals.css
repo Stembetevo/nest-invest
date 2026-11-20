@@ -50,9 +50,9 @@
 
 :root {
   --background: oklch(0.16 0.03 258);
-  --foreground: oklch(0.96 0.01 250);
-  --card: oklch(0.21 0.03 258);
-  --card-foreground: oklch(0.96 0.01 250);
+  --foreground: oklch(0.96 0.014 85);
+  --card: oklch(0.215 0.03 258);
+  --card-foreground: oklch(0.96 0.014 85);
   --popover: oklch(0.21 0.03 258);
   --popover-foreground: oklch(0.96 0.01 250);
   --primary: oklch(0.84 0.14 88);
@@ -60,7 +60,7 @@
   --secondary: oklch(0.26 0.025 258);
   --secondary-foreground: oklch(0.96 0.01 250);
   --muted: oklch(0.26 0.025 258);
-  --muted-foreground: oklch(0.74 0.02 250);
+  --muted-foreground: oklch(0.77 0.02 250);
   --accent: oklch(0.28 0.03 258);
   --accent-foreground: oklch(0.96 0.01 250);
   --destructive: oklch(0.7 0.16 25);
@@ -72,7 +72,7 @@
   --chart-3: oklch(0.55 0.05 258);
   --chart-4: oklch(0.4 0.04 258);
   --chart-5: oklch(0.78 0.04 95);
-  --radius: 0.85rem;
+  --radius: 1rem;
   --sidebar: oklch(0.18 0.03 258);
   --sidebar-foreground: oklch(0.96 0.01 250);
   --sidebar-primary: oklch(0.84 0.14 88);
@@ -121,12 +121,100 @@
   }
   html {
     @apply font-sans;
+    font-size: 106.25%;
+  }
+  body {
+    line-height: 1.65;
+  }
+  p {
+    text-wrap: pretty;
   }
   h1,
   h2,
   h3,
   .font-heading {
     font-family: var(--font-heading), ui-serif, Georgia, serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 60;
+    font-weight: 400;
+    text-wrap: balance;
+    line-height: 1.12;
   }
 }
 
+
+/* Dark navy panel with a gold hairline. Used for hero numbers and the chat avatar. */
+.hero-panel {
+  background:
+    radial-gradient(420px 220px at 100% 0%, oklch(0.84 0.14 88 / 0.10), transparent 70%),
+    linear-gradient(145deg, oklch(0.3 0.05 258), oklch(0.22 0.035 258));
+  box-shadow:
+    inset 0 0 0 1px oklch(0.84 0.14 88 / 0.22),
+    0 24px 48px -28px oklch(0.08 0.03 258 / 0.7);
+}
+
+/* Soft raised surface used for cards and form containers. */
+.surface {
+  background: linear-gradient(180deg, oklch(0.235 0.03 258), oklch(0.21 0.03 258));
+  box-shadow:
+    inset 0 0 0 1px oklch(1 0 0 / 0.08),
+    0 18px 36px -26px oklch(0.06 0.03 258 / 0.8);
+}
+
+/* Hand-set underline for inline emphasis: a little imperfection, on purpose. */
+.warm-rule {
+  height: 3px;
+  width: 3.5rem;
+  border-radius: 999px;
+  background: var(--gold);
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion                                                              */
+/* ------------------------------------------------------------------ */
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes view-in {
+  from { opacity: 0; transform: translate3d(calc(var(--dir, 1) * 32px), 12px, 0) scale(0.985); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes view-out {
+  from { opacity: 1; transform: none; filter: blur(0); }
+  to { opacity: 0; transform: translate3d(calc(var(--dir, 1) * -24px), -6px, 0) scale(0.99); filter: blur(4px); }
+}
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ring-fill { from { stroke-dashoffset: var(--ring-c); } }
+@keyframes drift-a { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(5%, 8%, 0); } }
+@keyframes drift-b { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-6%, -5%, 0); } }
+@keyframes ping-soft { 0% { transform: scale(1); opacity: 0.55; } 80%, 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes panel-pop { from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.96); } to { opacity: 1; transform: none; } }
+
+.rise { animation: rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.page-enter { animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.view-enter { animation: view-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.view-leave { animation: view-out 0.18s cubic-bezier(0.55, 0, 1, 0.45) both; }
+.grow-y { transform-origin: bottom; animation: grow-y 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 80ms + 250ms); }
+.grow-x { transform-origin: left; animation: grow-x 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 80ms + 250ms); }
+.ring-fill { animation: ring-fill 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both; }
+.orb-a { animation: drift-a 22s ease-in-out infinite; }
+.orb-b { animation: drift-b 28s ease-in-out infinite; }
+.ping-soft { animation: ping-soft 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* Lift-on-hover for cards that behave like tiles. */
+.lift { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease; }
+.lift:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px oklch(0.84 0.14 88 / 0.28), 0 28px 44px -28px oklch(0.06 0.03 258 / 0.9); }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise, .page-enter, .view-enter, .view-leave, .grow-y, .grow-x, .ring-fill,
+  .orb-a, .orb-b, .ping-soft { animation: none !important; }
+  .lift { transition: none; }
+  .lift:hover { transform: none; }
+}

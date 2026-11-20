@@ -13,7 +13,7 @@ export function MonthSummaryCard({ monthKey, change }: { monthKey: string; chang
   return (
     <section
       aria-labelledby="month-total-heading"
-      className="hero-panel rounded-3xl px-5 py-6 text-primary-foreground sm:px-7"
+      className="hero-panel rounded-3xl px-5 py-6 text-foreground sm:px-7"
     >
       <h2
         id="month-total-heading"
@@ -27,7 +27,7 @@ export function MonthSummaryCard({ monthKey, change }: { monthKey: string; chang
       <p
         className={cn(
           "mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm",
-          empty ? "bg-primary-foreground/10 text-primary-foreground/80" : "bg-primary-foreground/15"
+          empty ? "bg-white/10 text-foreground/80" : "bg-white/10"
         )}
       >
         {empty ? null : (

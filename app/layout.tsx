@@ -12,6 +12,7 @@ const dmSans = DM_Sans({
 const fraunces = Fraunces({
   variable: "--font-heading",
   subsets: ["latin"],
+  axes: ["opsz", "SOFT"],
 })
 
 export const metadata: Metadata = {
@@ -28,9 +29,10 @@ export default function RootLayout({
   return (
     <html
       lang="en-KE"
+      suppressHydrationWarning
       className={`${dmSans.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans">
         <Providers>{children}</Providers>
       </body>
     </html>

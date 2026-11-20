@@ -1,9 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { Menu } from "lucide-react"
+import { signOut } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { NAV_LINKS, type LandingView } from "@/components/nav-links"
 import {
   Sheet,
   SheetClose,
@@ -14,72 +17,72 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { signOut, useManikkaStore } from "@/lib/store"
 
-const LINKS = [
-  { href: "/#problem", label: "The problem" },
-  { href: "/#product", label: "The product" },
-  { href: "/#proof", label: "The report" },
-  { href: "/#pricing", label: "Pricing" },
-  { href: "/#faq", label: "Questions" },
-]
-
-export function SiteMenu() {
-  const router = useRouter()
-  const session = useManikkaStore()
-  const signedIn = Boolean(session.signedInAt)
+/** Mobile navigation drawer. Desktop links live in SiteHeader. */
+export function SiteMenu({
+  signedIn,
+  current,
+  onNavigate,
+}: {
+  signedIn: boolean
+  current: LandingView
+  onNavigate: (view: LandingView) => void
+}) {
   const [open, setOpen] = useState(false)
-
-  const leave = () => {
-    signOut()
-    setOpen(false)
-    router.push("/")
-  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          className="h-9 border-white/15 bg-transparent px-3 text-foreground hover:bg-white/5"
-        >
-          Menu
+        <Button variant="outline" size="icon" className="size-11 md:hidden" aria-label="Open menu">
+          <Menu aria-hidden="true" className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Manikka</SheetTitle>
-          <SheetDescription>Income proof for credit.</SheetDescription>
+          <SheetDescription>Track income. Prove it. Unlock credit.</SheetDescription>
         </SheetHeader>
         <nav aria-label="Sections" className="flex flex-col gap-1 px-4">
-          {LINKS.map((item) => (
-            <SheetClose asChild key={item.href}>
-              <Link
-                href={item.href}
-                className="rounded-lg px-2 py-2 text-base text-foreground hover:bg-muted"
+          {NAV_LINKS.map((item) => (
+            <SheetClose asChild key={item.id}>
+              <button
+                type="button"
+                onClick={() => onNavigate(item.id)}
+                aria-current={current === item.id ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-3 py-3 text-left text-base transition-colors hover:bg-muted",
+                  current === item.id && "bg-[var(--gold)]/12 text-[var(--gold)]"
+                )}
               >
                 {item.label}
-              </Link>
+              </button>
             </SheetClose>
           ))}
         </nav>
         <SheetFooter>
           {signedIn ? (
             <>
-              <Button asChild className="h-11">
+              <Button asChild className="h-12 text-base">
                 <SheetClose asChild>
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/dashboard">Open dashboard</Link>
                 </SheetClose>
               </Button>
-              <Button variant="outline" className="h-11" onClick={leave}>
-                Sign out
-              </Button>
+              <form action={signOut}>
+                <Button type="submit" variant="outline" className="h-12 w-full text-base">
+                  Sign out
+                </Button>
+              </form>
             </>
           ) : (
             <>
-              <Button asChild className="h-11">
+              <Button asChild className="h-12 text-base">
                 <SheetClose asChild>
-                  <Link href="/signup">Get started</Link>
+                  <Link href="/signup">Sign up</Link>
+                </SheetClose>
+              </Button>
+              <Button asChild variant="outline" className="h-12 text-base">
+                <SheetClose asChild>
+                  <Link href="/login">Log in</Link>
                 </SheetClose>
               </Button>
             </>

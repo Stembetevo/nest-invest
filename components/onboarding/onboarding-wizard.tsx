@@ -41,15 +41,15 @@ export function OnboardingWizard({
   const heading = HEADINGS[step]
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
+    <div className="mx-auto w-full max-w-lg space-y-8">
       <StepProgress step={step} />
       <div>
-        <h1 ref={headingRef} tabIndex={-1} className="font-heading text-3xl tracking-tight outline-none">
+        <h1 ref={headingRef} tabIndex={-1} className="font-heading text-4xl tracking-tight outline-none">
           {heading.title}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">{heading.body}</p>
+        <p className="mt-3 text-muted-foreground">{heading.body}</p>
       </div>
-      <div className="rounded-3xl bg-card px-5 py-6 ring-1 ring-foreground/10">
+      <div className="surface rounded-3xl px-6 py-8 sm:px-8">
         {step === 1 ? (
           <ProfileStep
             initial={values}

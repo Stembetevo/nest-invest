@@ -1,377 +1,393 @@
+"use client"
+
 import Link from "next/link"
-import { SiteMenu } from "@/components/site-menu"
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react"
+import {
+  ArrowRight,
+  Banknote,
+  Check,
+  Lock,
+  Plus,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  Wallet,
+} from "lucide-react"
 import { ManikkaWordmark } from "@/components/manikka-mark"
+import { NAV_LINKS, isLandingView, type LandingView } from "@/components/nav-links"
+import { SiteHeader } from "@/components/site-header"
 import { SAMPLE_REPORT } from "@/lib/income"
 import { formatKes } from "@/lib/money"
+import { cn } from "@/lib/utils"
 
-const PROBLEMS = [
-  {
-    title: "Informal income",
-    body: "The money arrives. It never looks like a salary a credit officer can tick.",
-  },
-  {
-    title: "No payslip",
-    body: "There is no HR letter and no bank form. A till statement is the record.",
-  },
-  {
-    title: "No credit history",
-    body: "Without a file, the answer is no — even when the deposits are real.",
-  },
+const FEATURES = [
+  { icon: Wallet, title: "One place for every payer", body: "Log brand deals, M-Pesa, YouTube payouts and client invoices in KSh, with sources you pick." },
+  { icon: TrendingUp, title: "See your real monthly income", body: "Month-over-month change, a six-month average and a breakdown by source, updated as you add income." },
+  { icon: Banknote, title: "Connect Stripe", body: "Sync card and international payouts so they count toward the same report." },
+  { icon: ShieldCheck, title: "A verified income score", body: "Repeating payers and steady months build a score a loan officer can read at a glance." },
+  { icon: Share2, title: "Share with a lender, once", body: "Send a report only when you decide to. Lenders see the summary, never your raw statement." },
+  { icon: Sparkles, title: "Ask Manikka", body: "Ask plain questions: which client pays most, what changed this month, what to fix before you apply." },
 ]
 
 const STEPS = [
-  {
-    n: "01",
-    title: "Share your M-Pesa",
-    body: "You approve six months of inflows. Manikka never sees your PIN and never moves the money.",
-  },
-  {
-    n: "02",
-    title: "We read the pattern",
-    body: "Repeating tills, paybills, and regular senders become one monthly income.",
-  },
-  {
-    n: "03",
-    title: "Lenders get proof",
-    body: "A report with a score, a range, and the months behind it. They pay to read it. You do not.",
-  },
+  { title: "Add your income", body: "Log it by hand or connect Stripe. Pick the sources you earn from." },
+  { title: "Build your profile", body: "Two months of steady entries, plus the five profile steps, make a report ready." },
+  { title: "Share your report", body: "Send the score and six-month pattern to a lender. They pay for it. You don’t." },
 ]
 
-const QUESTIONS = [
-  {
-    q: "Where does the data come from?",
-    a: "Six months of M-Pesa inflows you choose to share. The read looks for repeating payers. It does not ask for your PIN.",
-  },
-  {
-    q: "Do you take the money?",
-    a: "No. Manikka does not hold funds, issue the loan, or sit in the payment. Lenders pay when you approve a report.",
-  },
-  {
-    q: "Who can see my report?",
-    a: "Only you, until you share it. A lender sees the score, the monthly income, and the pattern — not your raw statement.",
-  },
-  {
-    q: "What if my income is informal?",
-    a: "That is the file we build. Till sales, paybills, and people who pay you on a rhythm all count when they repeat.",
-  },
+const FAQ = [
+  { q: "Do I need a payslip or bank statement?", a: "No. Your own income log and connected sources are the record. That is the point." },
+  { q: "Do you ever see my M-Pesa PIN or move my money?", a: "No. Manikka never asks for a PIN, never holds funds and never issues a loan." },
+  { q: "Who can see my report?", a: "Only you, until you share it. A lender sees your score, monthly income and the pattern behind it." },
+  { q: "Is Manikka a lender or credit bureau?", a: "No. Manikka produces income proof. Lenders make their own decisions." },
+  { q: "What does it cost?", a: "Nothing for you. Lenders pay KSh 500 for each report you approve." },
 ]
 
-export function LandingPage() {
-  const peak = Math.max(...SAMPLE_REPORT.months.map((month) => month.inflow))
+const stagger = (i: number) => ({ "--i": i }) as React.CSSProperties
 
+/* ---------------------------------------------------------------- */
+/* View state, kept in the URL hash so links and Back both work      */
+/* ---------------------------------------------------------------- */
+
+function subscribe(callback: () => void) {
+  window.addEventListener("hashchange", callback)
+  window.addEventListener("popstate", callback)
+  return () => {
+    window.removeEventListener("hashchange", callback)
+    window.removeEventListener("popstate", callback)
+  }
+}
+function readView(): LandingView {
+  const hash = window.location.hash.replace(/^#/, "")
+  return isLandingView(hash) ? hash : "home"
+}
+
+const primaryCta =
+  "inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-[var(--gold)] px-8 text-base font-semibold text-primary-foreground shadow-[0_14px_30px_-14px_var(--gold)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--gold)]/90 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+const ghostCta =
+  "inline-flex h-14 items-center justify-center gap-2 rounded-xl border border-white/15 px-8 text-base font-medium transition-colors hover:bg-white/5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+
+/* ---------------------------------------------------------------- */
+/* Pieces                                                            */
+/* ---------------------------------------------------------------- */
+
+function ScoreRing({ score }: { score: number }) {
+  const r = 26
+  const c = 2 * Math.PI * r
   return (
-    <div className="min-h-dvh">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link href="/" aria-label="Manikka home">
-            <ManikkaWordmark />
-          </Link>
-          <SiteMenu />
-        </div>
-      </header>
-
-      <main>
-        <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:py-24 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              Income. Proof. Credit.
-            </p>
-            <h1 className="font-heading mt-4 max-w-xl text-5xl leading-[1.02] tracking-tight sm:text-6xl">
-              Prove your income. Unlock credit.
-            </h1>
-            <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Manikka turns informal earnings into a verified income report lenders can trust.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-5">
-              <Link
-                href="/signup"
-                className="inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
-              >
-                Get started
-              </Link>
-              <a
-                href="#proof"
-                className="text-sm font-medium text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
-              >
-                See it in action
-              </a>
-            </div>
-          </div>
-          <IncomeChart />
-        </section>
-
-        <section id="problem" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              The problem
-            </p>
-            <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
-              You get paid. Banks can’t see it.
-            </h2>
-            <div className="mt-10 grid gap-8 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/10">
-              {PROBLEMS.map((item) => (
-                <div key={item.title} className="sm:px-6 sm:first:pl-0 sm:last:pr-0">
-                  <h3 className="text-base font-medium">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="product" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              The product
-            </p>
-            <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
-              A file for income that never had one.
-            </h2>
-            <ol className="mt-10 grid gap-6 lg:grid-cols-3">
-              {STEPS.map((step) => (
-                <li key={step.n} className="border-t border-white/15 pt-5">
-                  <p className="text-[11px] font-semibold tracking-[0.18em] text-[var(--gold)]">
-                    {step.n}
-                  </p>
-                  <h3 className="mt-3 text-lg font-medium">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section id="proof" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:py-20 lg:grid-cols-2">
-            <div>
-              <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-                The proof
-              </p>
-              <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
-                A profile for every informal earner.
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Lenders stop asking for a payslip that does not exist. They read a score, a
-                monthly income, and the six months that produced it.
-              </p>
-              <dl className="mt-8 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <dt className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    Before
-                  </dt>
-                  <dd className="mt-1 text-sm">No payslip. No file. Declined.</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    After
-                  </dt>
-                  <dd className="mt-1 text-sm">Verified income a lender can price.</dd>
-                </div>
-              </dl>
-            </div>
-
-            <article className="rounded-3xl border border-white/10 bg-card p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                    Sample report
-                  </p>
-                  <p className="mt-1 text-lg font-medium">{SAMPLE_REPORT.name}</p>
-                  <p className="text-sm text-muted-foreground">{SAMPLE_REPORT.place}</p>
-                </div>
-                <ScoreRing score={SAMPLE_REPORT.score} />
-              </div>
-              <p className="mt-2 text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Verified monthly income
-              </p>
-              <p className="font-heading text-4xl">{formatKes(SAMPLE_REPORT.monthlyIncome)}</p>
-              <div className="mt-6 flex h-24 items-end gap-2" aria-hidden="true">
-                {SAMPLE_REPORT.months.map((month) => (
-                  <div key={month.label} className="flex flex-1 flex-col items-center gap-2">
-                    <div
-                      className="w-full rounded-sm bg-[var(--gold)]/80"
-                      style={{ height: `${Math.max(12, (month.inflow / peak) * 72)}px` }}
-                    />
-                    <span className="text-[10px] text-muted-foreground">{month.label}</span>
-                  </div>
-                ))}
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section id="pricing" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              Pricing
-            </p>
-            <h2 className="font-heading mt-3 max-w-2xl text-3xl tracking-tight sm:text-4xl">
-              Free for you. Lenders pay for the report.
-            </h2>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <article className="rounded-3xl border border-white/10 p-6">
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                  Earners
-                </p>
-                <p className="font-heading mt-3 text-4xl">KSh 0</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Connect a statement, read your own report, and choose when a lender may see it.
-                </p>
-              </article>
-              <article className="rounded-3xl border border-[var(--gold)]/40 bg-white/5 p-6">
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-[var(--gold)] uppercase">
-                  Lenders
-                </p>
-                <p className="font-heading mt-3 text-4xl">KSh 500</p>
-                <p className="mt-1 text-sm text-muted-foreground">per approved report</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  They pay when you share. The price is for the proof, not for your principal.
-                </p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="faq" className="scroll-mt-20 border-t border-white/10">
-          <div className="mx-auto max-w-3xl px-5 py-16 sm:py-20">
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[var(--gold)] uppercase">
-              Questions
-            </p>
-            <h2 className="font-heading mt-3 text-3xl tracking-tight sm:text-4xl">
-              What lenders will ask you too.
-            </h2>
-            <div className="mt-8 divide-y divide-white/10 border-y border-white/10">
-              {QUESTIONS.map((item) => (
-                <details key={item.q} className="group py-4">
-                  <summary className="cursor-pointer list-none text-base font-medium [&::-webkit-details-marker]:hidden">
-                    <span className="flex items-center justify-between gap-4">
-                      {item.q}
-                      <span aria-hidden="true" className="text-muted-foreground group-open:hidden">
-                        +
-                      </span>
-                      <span aria-hidden="true" className="hidden text-muted-foreground group-open:inline">
-                        –
-                      </span>
-                    </span>
-                  </summary>
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                    {item.a}
-                  </p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-5 py-16 sm:py-20">
-            <h2 className="font-heading max-w-xl text-4xl tracking-tight sm:text-5xl">
-              Ready to show what you earn?
-            </h2>
-            <Link
-              href="/signup"
-              className="inline-flex h-12 items-center rounded-lg bg-[var(--gold)] px-5 text-base font-medium text-primary-foreground hover:bg-[var(--gold)]/90"
-            >
-              Get started
-            </Link>
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:flex-row sm:justify-between">
-          <div>
-            <ManikkaWordmark />
-            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-              Income proof for people who get paid without a payslip.
-            </p>
-          </div>
-          <div className="flex gap-12 text-sm">
-            <div className="space-y-2">
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Product
-              </p>
-              <a className="block text-muted-foreground hover:text-foreground" href="#product">
-                The product
-              </a>
-              <a className="block text-muted-foreground hover:text-foreground" href="#pricing">
-                Pricing
-              </a>
-              <a className="block text-muted-foreground hover:text-foreground" href="#faq">
-                Questions
-              </a>
-            </div>
-            <div className="space-y-2">
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Account
-              </p>
-              <Link className="block text-muted-foreground hover:text-foreground" href="/signup">
-                Sign up
-              </Link>
-              <Link className="block text-muted-foreground hover:text-foreground" href="/dashboard">
-                Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
-        <p className="mx-auto max-w-6xl px-5 pb-8 text-[11px] leading-relaxed text-muted-foreground">
-          Demo only. Statement reads stay on this device and are simulated. Manikka is not a
-          licensed credit bureau, not a lender, and not an M-Pesa product.
-        </p>
-      </footer>
+    <div className="relative size-16 shrink-0" role="img" aria-label={`Income score ${score} out of 100`}>
+      <svg viewBox="0 0 64 64" className="size-full -rotate-90" aria-hidden="true">
+        <circle cx="32" cy="32" r={r} fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="6" />
+        <circle
+          cx="32" cy="32" r={r} fill="none" stroke="var(--gold)" strokeWidth="6" strokeLinecap="round"
+          className="ring-fill" strokeDasharray={c} strokeDashoffset={c * (1 - score / 100)}
+          style={{ "--ring-c": c } as React.CSSProperties}
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-lg font-semibold">{score}</span>
     </div>
   )
 }
 
-function IncomeChart() {
+function ReportPreview() {
+  const peak = Math.max(...SAMPLE_REPORT.months.map((m) => m.inflow))
   return (
-    <svg
-      viewBox="0 0 480 280"
-      className="w-full text-[var(--gold)]"
-      role="img"
-      aria-label="Illustrative rising income line"
-    >
-      <line x1="24" y1="40" x2="456" y2="40" stroke="currentColor" strokeOpacity="0.15" />
-      <line x1="24" y1="110" x2="456" y2="110" stroke="currentColor" strokeOpacity="0.15" />
-      <line x1="24" y1="180" x2="456" y2="180" stroke="currentColor" strokeOpacity="0.15" />
-      <path
-        d="M32 200 C 90 190, 120 170, 160 150 S 240 120, 280 108 S 360 70, 448 42"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M32 200 C 90 190, 120 170, 160 150 S 240 120, 280 108 S 360 70, 448 42 V 230 H 32 Z"
-        fill="currentColor"
-        opacity="0.08"
-      />
-    </svg>
+    <article aria-label="Sample income report" className="hero-panel w-full rounded-[2rem] p-6 sm:p-8">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm text-muted-foreground">Income report for</p>
+          <p className="text-lg font-medium">
+            {SAMPLE_REPORT.name}, {SAMPLE_REPORT.place}
+          </p>
+        </div>
+        <ScoreRing score={SAMPLE_REPORT.score} />
+      </div>
+      <p className="mt-5 text-sm text-muted-foreground">Verified monthly income</p>
+      <p className="font-heading text-4xl tracking-tight sm:text-5xl">{formatKes(SAMPLE_REPORT.monthlyIncome)}</p>
+      <div className="mt-7 flex h-32 items-end gap-3" aria-hidden="true">
+        {SAMPLE_REPORT.months.map((m, i) => (
+          <div key={m.label} className="flex flex-1 flex-col items-center gap-2">
+            <div
+              className="grow-y w-full rounded-t-md bg-[var(--gold)]/85"
+              style={{ height: `${Math.max(14, (m.inflow / peak) * 84)}px`, ...stagger(i) }}
+            />
+            <span className="text-[11px] text-muted-foreground">{m.label}</span>
+          </div>
+        ))}
+      </div>
+      <ul className="mt-6 space-y-2.5 border-t border-white/10 pt-5 text-sm">
+        {SAMPLE_REPORT.sources.map((s) => (
+          <li key={s.name} className="flex justify-between gap-3">
+            <span className="text-muted-foreground">{s.name}</span>
+            <span className="font-medium">{s.share}%</span>
+          </li>
+        ))}
+      </ul>
+    </article>
   )
 }
 
-function ScoreRing({ score }: { score: number }) {
-  const radius = 28
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - score / 100)
+function NextLink({ to, onNavigate }: { to: LandingView; onNavigate: (v: LandingView) => void }) {
+  const next = NAV_LINKS.find((l) => l.id === to)
   return (
-    <svg viewBox="0 0 72 72" className="size-16 shrink-0" role="img" aria-label={`Sample score ${score} out of 100`}>
-      <circle cx="36" cy="36" r={radius} fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="5" />
-      <circle
-        cx="36"
-        cy="36"
-        r={radius}
-        fill="none"
-        stroke="var(--gold)"
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        transform="rotate(-90 36 36)"
+    <button
+      type="button"
+      onClick={() => onNavigate(to)}
+      className="group inline-flex items-center gap-2 rounded-lg py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-[var(--gold)] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+    >
+      Next: {next?.label}
+      <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+    </button>
+  )
+}
+
+function ViewHeading({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
+  return (
+    <div className="max-w-3xl">
+      <p className="rise text-sm font-medium tracking-wide text-[var(--gold)] uppercase" style={stagger(0)}>{eyebrow}</p>
+      <h2 className="rise font-heading mt-3 text-4xl tracking-tight sm:text-5xl" style={stagger(1)}>{title}</h2>
+      {body ? <p className="rise mt-4 text-lg text-muted-foreground" style={stagger(2)}>{body}</p> : null}
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------- */
+/* Views                                                             */
+/* ---------------------------------------------------------------- */
+
+function HomeView({ signedIn, onNavigate }: { signedIn: boolean; onNavigate: (v: LandingView) => void }) {
+  return (
+    <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+      <div>
+        <p className="rise inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-sm text-muted-foreground" style={stagger(0)}>
+          <span className="size-1.5 rounded-full bg-[var(--gold)]" aria-hidden="true" />
+          Income proof for people paid without a payslip
+        </p>
+        <h1 className="rise font-heading mt-6 max-w-xl text-5xl tracking-tight sm:text-6xl xl:text-7xl" style={stagger(1)}>
+          Every shilling you earn, on the record.
+        </h1>
+        <p className="rise mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground sm:text-xl sm:leading-relaxed" style={stagger(2)}>
+          Track income from M-Pesa, Stripe and clients in one dashboard. Manikka turns it into a verified report lenders can read, free for you.
+        </p>
+        <div className="rise mt-9 flex flex-col gap-4 sm:flex-row sm:items-center" style={stagger(3)}>
+          <Link href={signedIn ? "/dashboard" : "/signup"} className={primaryCta}>
+            {signedIn ? "Open your dashboard" : "Sign up"}
+            <ArrowRight className="size-5" aria-hidden="true" />
+          </Link>
+          <button type="button" onClick={() => onNavigate("how")} className={ghostCta}>
+            See how it works
+          </button>
+        </div>
+        <ul className="mt-9 space-y-2.5 text-[0.95rem] text-muted-foreground">
+          {["No payslip or bank form needed", "You decide who sees your report", "Never asks for your M-Pesa PIN"].map((t, i) => (
+            <li key={t} className="rise flex items-center gap-2" style={stagger(4 + i)}>
+              <Check className="size-4 text-[var(--gold)]" aria-hidden="true" />
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="rise w-full lg:max-w-md lg:justify-self-end xl:max-w-lg" style={stagger(3)}>
+        <ReportPreview />
+      </div>
+    </div>
+  )
+}
+
+function FeaturesView({ onNavigate }: { onNavigate: (v: LandingView) => void }) {
+  return (
+    <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+      <ViewHeading
+        eyebrow="Features"
+        title="You get paid. Banks just can’t see it yet."
+        body="Informal income is real income. Manikka gives it the file a lender expects."
       />
-      <text x="36" y="41" textAnchor="middle" fill="currentColor" fontSize="16" fontFamily="var(--font-heading), serif">
-        {score}
-      </text>
-    </svg>
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        {FEATURES.map(({ icon: Icon, title, body }, i) => (
+          <div key={title} className="rise surface lift rounded-3xl p-6 lg:p-7" style={stagger(i + 2)}>
+            <div className="flex items-center gap-4">
+              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--gold)]/12 text-[var(--gold)]">
+                <Icon className="size-5" aria-hidden="true" />
+              </span>
+              <h3 className="font-heading text-xl">{title}</h3>
+            </div>
+            <p className="mt-4 leading-relaxed text-muted-foreground">{body}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8"><NextLink to="how" onNavigate={onNavigate} /></div>
+    </div>
+  )
+}
+
+function HowView({ signedIn, onNavigate }: { signedIn: boolean; onNavigate: (v: LandingView) => void }) {
+  return (
+    <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+      <ViewHeading eyebrow="How it works" title="From daily income to a lender-ready report" />
+      <ol className="relative mt-12 grid gap-6 lg:grid-cols-3 lg:gap-8">
+        <span aria-hidden="true" className="grow-x absolute top-[3.25rem] right-[16%] left-[16%] hidden h-px bg-gradient-to-r from-transparent via-[var(--gold)]/50 to-transparent lg:block" style={stagger(3)} />
+        {STEPS.map((s, i) => (
+          <li key={s.title} className="rise surface lift relative rounded-3xl p-8" style={stagger(i + 2)}>
+            <span className="flex size-12 items-center justify-center rounded-full bg-[var(--gold)] text-base font-semibold text-primary-foreground shadow-[0_10px_24px_-10px_var(--gold)]">{i + 1}</span>
+            <h3 className="mt-6 font-heading text-2xl">{s.title}</h3>
+            <p className="mt-3 leading-relaxed text-muted-foreground">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+      <div className="rise mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" style={stagger(6)}>
+        <Link href={signedIn ? "/dashboard" : "/signup"} className={primaryCta}>
+          {signedIn ? "Open your dashboard" : "Start building your income record"}
+        </Link>
+        <NextLink to="pricing" onNavigate={onNavigate} />
+      </div>
+    </div>
+  )
+}
+
+function PricingView({ signedIn, onNavigate }: { signedIn: boolean; onNavigate: (v: LandingView) => void }) {
+  return (
+    <div className="mx-auto w-full max-w-5xl px-5 sm:px-8">
+      <ViewHeading eyebrow="Pricing" title="Free for you. Lenders pay for the proof." />
+      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:gap-8">
+        <article className="rise surface lift relative rounded-[2rem] border border-[var(--gold)]/40 p-8" style={stagger(2)}>
+          <span className="absolute top-6 right-6 rounded-full bg-[var(--gold)]/15 px-3 py-1 text-xs font-medium text-[var(--gold)]">Most people</span>
+          <h3 className="text-muted-foreground">For earners</h3>
+          <p className="font-heading mt-3 text-5xl">KSh 0</p>
+          <ul className="mt-7 space-y-3 text-[0.95rem] text-muted-foreground">
+            {["Unlimited income logging", "Dashboard, charts and Manikka chat", "Stripe sync", "Share a report when you choose"].map((t) => (
+              <li key={t} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-[var(--gold)]" aria-hidden="true" />{t}</li>
+            ))}
+          </ul>
+          <Link href={signedIn ? "/dashboard" : "/signup"} className={`${primaryCta} mt-9 w-full sm:w-auto`}>
+            {signedIn ? "Open your dashboard" : "Sign up"}
+          </Link>
+        </article>
+        <article className="rise rounded-[2rem] border border-white/10 p-8" style={stagger(3)}>
+          <h3 className="text-muted-foreground">For lenders</h3>
+          <p className="font-heading mt-3 text-5xl">KSh 500</p>
+          <p className="text-sm text-muted-foreground">per approved report</p>
+          <p className="mt-7 flex gap-3 leading-relaxed text-muted-foreground">
+            <Lock className="mt-1 size-4 shrink-0" aria-hidden="true" />
+            Lenders pay only when you share. The fee covers the proof, not your loan.
+          </p>
+        </article>
+      </div>
+      <div className="mt-8"><NextLink to="faq" onNavigate={onNavigate} /></div>
+    </div>
+  )
+}
+
+function FaqView({ signedIn }: { signedIn: boolean }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  return (
+    <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+      <div>
+        <ViewHeading eyebrow="FAQ" title="Questions, answered" />
+        <div className="rise mt-8" style={stagger(3)}>
+          <Link href={signedIn ? "/dashboard" : "/signup"} className={primaryCta}>
+            {signedIn ? "Open your dashboard" : "Sign up"}
+          </Link>
+        </div>
+      </div>
+      <div className="divide-y divide-white/10 border-y border-white/10">
+        {FAQ.map((item, i) => {
+          const open = openIndex === i
+          return (
+            <div key={item.q} className="rise" style={stagger(i + 2)}>
+              <h3>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={`faq-${i}`}
+                  onClick={() => setOpenIndex(open ? null : i)}
+                  className="flex min-h-11 w-full items-center justify-between gap-4 py-5 text-left text-lg font-medium focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                >
+                  {item.q}
+                  <Plus aria-hidden="true" className={cn("size-5 shrink-0 text-muted-foreground transition-transform duration-300", open && "rotate-45 text-[var(--gold)]")} />
+                </button>
+              </h3>
+              <div
+                id={`faq-${i}`}
+                role="region"
+                className={cn("grid transition-[grid-template-rows,opacity] duration-300 ease-out", open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}
+              >
+                <div className="overflow-hidden">
+                  <p className="max-w-2xl pb-5 leading-relaxed text-muted-foreground">{item.a}</p>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------- */
+/* Page                                                              */
+/* ---------------------------------------------------------------- */
+
+export function LandingPage({ signedIn = false }: { signedIn?: boolean }) {
+  const target = useSyncExternalStore(subscribe, readView, () => "home" as LandingView)
+  const [shown, setShown] = useState<LandingView>(target)
+  const [leaving, setLeaving] = useState(false)
+  const dir = useRef(1)
+
+  const navigate = useCallback((view: LandingView) => {
+    if (readView() === view) return
+    const url = view === "home" ? window.location.pathname + window.location.search : `#${view}`
+    window.history.pushState(null, "", url)
+    window.dispatchEvent(new Event("popstate"))
+  }, [])
+
+  // Play the exit animation, swap the view, then the new one animates in.
+  useEffect(() => {
+    if (target === shown) return
+    const order = NAV_LINKS.map((l) => l.id as string)
+    dir.current = order.indexOf(target) >= order.indexOf(shown) ? 1 : -1
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    setLeaving(true)
+    const t = window.setTimeout(() => {
+      setShown(target)
+      setLeaving(false)
+      window.scrollTo({ top: 0 })
+    }, reduce ? 0 : 180)
+    return () => window.clearTimeout(t)
+  }, [target, shown])
+
+  return (
+    <div className="relative flex min-h-dvh flex-col overflow-x-clip">
+      {/* Soft drifting glow behind everything */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="orb-a absolute -top-40 right-[-10%] size-[42rem] rounded-full bg-[var(--gold)]/10 blur-3xl" />
+        <div className="orb-b absolute top-1/3 -left-40 size-[36rem] rounded-full bg-[oklch(0.45_0.1_258/0.35)] blur-3xl" />
+      </div>
+
+      <SiteHeader signedIn={signedIn} current={target} onNavigate={navigate} />
+
+      <main className="flex flex-1 items-center py-8 sm:py-10" style={{ "--dir": dir.current } as React.CSSProperties}>
+        <div key={shown} className={cn("w-full", leaving ? "view-leave" : "view-enter")}>
+          {shown === "home" ? <HomeView signedIn={signedIn} onNavigate={navigate} /> : null}
+          {shown === "features" ? <FeaturesView onNavigate={navigate} /> : null}
+          {shown === "how" ? <HowView signedIn={signedIn} onNavigate={navigate} /> : null}
+          {shown === "pricing" ? <PricingView signedIn={signedIn} onNavigate={navigate} /> : null}
+          {shown === "faq" ? <FaqView signedIn={signedIn} /> : null}
+        </div>
+      </main>
+
+      <footer className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <ManikkaWordmark />
+          <p className="leading-relaxed">
+            Manikka is not a lender, bank or licensed credit bureau. © {new Date().getFullYear()} Manikka.
+          </p>
+          <nav aria-label="Footer" className="flex gap-5 text-sm">
+            <Link href="/login" className="hover:text-foreground">Log in</Link>
+            <Link href="/signup" className="hover:text-foreground">Sign up</Link>
+          </nav>
+        </div>
+      </footer>
+    </div>
   )
 }

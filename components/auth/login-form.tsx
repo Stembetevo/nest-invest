@@ -4,6 +4,7 @@ import Link from "next/link"
 import { login } from "@/app/auth/actions"
 import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
+import { PasswordField } from "@/components/auth/password-field"
 import { SubmitButton } from "@/components/submit-button"
 import { validateLoginForm } from "@/lib/validation"
 import { formText, useValidatedAction } from "@/components/use-validated-action"
@@ -34,10 +35,9 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
         defaultValue={state.email}
         error={errors.email}
       />
-      <FormField
+      <PasswordField
         id="password"
         name="password"
-        type="password"
         label="Password"
         autoComplete="current-password"
         error={errors.password}

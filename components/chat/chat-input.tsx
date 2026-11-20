@@ -54,7 +54,7 @@ export function ChatInput({
         onKeyDown={onKeyDown}
         placeholder="Ask Manikka about your income…"
         aria-describedby="manikka-input-hint"
-        className="max-h-40 min-h-11 flex-1 resize-none rounded-2xl border border-input bg-card px-3.5 py-2.5 text-base outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
+        className="max-h-40 min-h-12 flex-1 resize-none rounded-2xl border border-input bg-card px-4 py-3 text-base outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm"
       />
       <span id="manikka-input-hint" className="sr-only">
         Press Enter to send, Shift and Enter for a new line. Press Escape on an empty message to

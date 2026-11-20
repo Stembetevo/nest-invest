@@ -56,7 +56,7 @@ export function SourcesStep({
         <FieldError id="sources-error" message={errors.sources} />
       </fieldset>
       <div className="flex gap-3">
-        <Button type="button" variant="outline" size="lg" className="h-11 px-5" onClick={onBack}>
+        <Button type="button" variant="outline" size="lg" className="px-6" onClick={onBack}>
           Back
         </Button>
         <SubmitButton pending={pending} pendingLabel="Saving…" className="flex-1">

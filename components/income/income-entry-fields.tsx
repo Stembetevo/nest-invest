@@ -33,7 +33,7 @@ export function IncomeEntryFields({
           defaultValue={defaultSource ?? ""}
           aria-invalid={errors.source ? true : undefined}
           aria-describedby={errors.source ? "source-error" : undefined}
-          className="h-11 w-full rounded-lg border border-input bg-transparent px-2.5 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
+          className="h-12 w-full rounded-xl border border-input bg-white/[0.03] px-4 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
         >
           <option value="" disabled>
             Choose a source

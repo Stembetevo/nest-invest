@@ -4,9 +4,9 @@ import { IncomeList } from "@/components/income/income-list"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { IncomeEntry } from "@/lib/income"
 
-export function RecentIncome({ entries }: { entries: IncomeEntry[] }) {
+export function RecentIncome({ entries, className }: { entries: IncomeEntry[]; className?: string }) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-lg">Recent income</CardTitle>
         <CardAction>
@@ -17,9 +17,9 @@ export function RecentIncome({ entries }: { entries: IncomeEntry[] }) {
       </CardHeader>
       <CardContent>
         {entries.length ? (
-          <IncomeList entries={entries} />
+          <IncomeList entries={entries} tallOnlyFrom={3} />
         ) : (
-          <div className="flex flex-col items-center gap-2 rounded-2xl bg-muted/60 px-4 py-8 text-center">
+          <div className="flex flex-col items-center gap-2 rounded-2xl bg-muted/50 px-6 py-10 text-center">
             <Inbox className="size-6 text-muted-foreground" aria-hidden="true" />
             <p className="font-medium">No income yet</p>
             <p className="max-w-xs text-sm text-muted-foreground">

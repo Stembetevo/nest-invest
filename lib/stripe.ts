@@ -41,48 +41,8 @@ export function stripeClient(accessToken: string) {
   return new Stripe(accessToken)
 }
 
-/** Platform secret used for Financial Connections. Connect OAuth stores this same key as the client secret. */
-export function stripeSecretKey() {
-  return process.env.STRIPE_SECRET_KEY || process.env.STRIPE_CONNECT_CLIENT_SECRET || null
-}
-
-export function stripePublishableKey() {
-  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.STRIPE_PUBLISHABLE_KEY || null
-}
-
-export function platformStripe() {
-  const secret = stripeSecretKey()
-  if (!secret) return null
-  return new Stripe(secret)
-}
-
-/** A message for the dashboard when a Stripe lookup cannot run. A missing connection is not an error. */
-export function stripeSetupMessage(error: unknown) {
-  const message = error instanceof Error ? error.message : ""
-  if (message.includes("service-role")) {
-    return "Add SUPABASE_SERVICE_ROLE_KEY so linked accounts can be stored."
-  }
-  if (message.includes("STRIPE_TOKEN_ENCRYPTION_KEY")) {
-    return "STRIPE_TOKEN_ENCRYPTION_KEY must be a base64-encoded 32-byte key. Generate one with openssl rand -base64 32."
-  }
-  if (/does not exist|schema cache|Could not find the table/i.test(message)) {
-    return "Apply the Stripe migrations in Supabase before linking an account."
-  }
-  if (message.startsWith("Could not load Stripe connection:")) return message
-  return "Stripe data could not be loaded. Check the server configuration."
-}
-
 export function stripeRedirectUri(origin: string) {
-  const fallback = `${origin}/api/stripe/callback`
-  const configured = process.env.STRIPE_CONNECT_REDIRECT_URI
-  if (!configured) return fallback
-  try {
-    if (new URL(configured).origin === new URL(origin).origin) return configured
-  } catch {
-    return fallback
-  }
-  // A redirect URI on another host sends Stripe to a site that does not serve this app.
-  return fallback
+  return process.env.STRIPE_CONNECT_REDIRECT_URI ?? `${origin}/api/stripe/callback`
 }
 
 export function encryptStripeToken(token: string, key: Uint8Array<ArrayBufferLike>) {

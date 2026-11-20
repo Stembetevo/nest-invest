@@ -8,7 +8,11 @@ import { ChatLauncherProvider } from "@/components/chat/chat-launcher"
 import { ManikkaWordmark } from "@/components/manikka-mark"
 import { cn } from "@/lib/utils"
 
-const CREATOR_ROUTES = ["/dashboard", "/onboarding"]
+const APP_ROUTES = ["/dashboard", "/income"]
+const NAV = [
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/income", label: "Income", icon: ReceiptText },
+]
 
 const matches = (pathname: string, route: string) => pathname === route || pathname.startsWith(`${route}/`)
 

@@ -90,22 +90,12 @@ export function incomeBySource(entries: IncomeEntry[], monthKeys?: string[]): So
 
 export type ProfileStepStatus = { id: string; label: string; done: boolean }
 
-export function verifiedProfileSteps({
-  profile,
-  sourceCount,
-  entries,
-}: {
+export function verifiedProfileSteps(
   profile: Pick<Profile, "displayName" | "creatorType">
-  sourceCount: number
-  entries: IncomeEntry[]
-}): ProfileStepStatus[] {
-  const months = new Set(entries.map(monthKeyOf))
+): ProfileStepStatus[] {
   return [
     { id: "name", label: "Add your name", done: Boolean(profile.displayName) },
     { id: "type", label: "Choose your creator type", done: Boolean(profile.creatorType) },
-    { id: "sources", label: "Pick your income sources", done: sourceCount > 0 },
-    { id: "first-entry", label: "Log your first income", done: entries.length > 0 },
-    { id: "two-months", label: "Log income in two different months", done: months.size >= 2 },
   ]
 }
 

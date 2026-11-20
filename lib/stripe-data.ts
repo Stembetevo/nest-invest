@@ -6,6 +6,7 @@ import {
   encryptStripeToken,
   getStripeConfig,
   stripeClient,
+  stripeSetupMessage,
 } from "@/lib/stripe"
 import type { Stripe as StripeTypes } from "stripe"
 
@@ -63,10 +64,20 @@ async function getStripeConnection(userId: string) {
 }
 
 export async function stripeConnectionStatus(userId: string) {
-  const connection = await getStripeConnection(userId)
-  return connection
-    ? { connected: true as const, accountId: connection.accountId, livemode: connection.livemode }
-    : { connected: false as const }
+  try {
+    const connection = await getStripeConnection(userId)
+    return connection
+      ? {
+          connected: true as const,
+          accountId: connection.accountId,
+          livemode: connection.livemode,
+          setupMessage: null,
+        }
+      : { connected: false as const, setupMessage: null }
+  } catch (error) {
+    console.error("Stripe connection lookup failed", error)
+    return { connected: false as const, setupMessage: stripeSetupMessage(error) }
+  }
 }
 
 export async function syncStripeTransactions(userId: string, months: number) {

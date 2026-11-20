@@ -16,36 +16,32 @@ function profile(overrides: Partial<Profile> = {}): Profile {
 
 describe("resolveOnboardingStep (resume)", () => {
   it("starts a brand new creator at step 1", () => {
-    expect(resolveOnboardingStep(profile(), 0)).toBe(1)
+    expect(resolveOnboardingStep(profile())).toBe(1)
   })
 
-  it("resumes at the saved step", () => {
-    const named = { displayName: "Otieno", creatorType: "musician" as const }
-    expect(resolveOnboardingStep(profile({ ...named, onboardingStep: 2 }), 0)).toBe(2)
-    expect(resolveOnboardingStep(profile({ ...named, onboardingStep: 3 }), 2)).toBe(3)
-  })
-
-  it("never skips past a step whose data is missing", () => {
-    expect(resolveOnboardingStep(profile({ onboardingStep: 3 }), 2)).toBe(1)
+  it("treats a saved name and creator type as complete", () => {
     expect(
       resolveOnboardingStep(
-        profile({ displayName: "Otieno", creatorType: "musician", onboardingStep: 3 }),
-        0
+        profile({ displayName: "Otieno", creatorType: "musician", onboardingStep: 2 })
       )
-    ).toBe(2)
+    ).toBe("complete")
   })
 
-  it("reports complete once finished or skipped, regardless of step", () => {
+  it("stays on the profile step when the name or creator type is missing", () => {
+    expect(resolveOnboardingStep(profile({ onboardingStep: 3 }))).toBe(1)
+    expect(resolveOnboardingStep(profile({ displayName: "Otieno", onboardingStep: 3 }))).toBe(1)
+  })
+
+  it("reports complete once finished, regardless of step", () => {
     expect(
-      resolveOnboardingStep(profile({ onboardingStep: 3, onboardingCompletedAt: "2026-10-08T10:00:00Z" }), 0)
+      resolveOnboardingStep(profile({ onboardingStep: 3, onboardingCompletedAt: "2026-10-08T10:00:00Z" }))
     ).toBe("complete")
   })
 })
 
 describe("advanceOnboardingStep", () => {
-  it("moves to the next step after finishing one", () => {
-    expect(advanceOnboardingStep(1, 1)).toBe(2)
-    expect(advanceOnboardingStep(2, 2)).toBe(3)
+  it("stays on the only profile step", () => {
+    expect(advanceOnboardingStep(1, 1)).toBe(1)
   })
 
   it("does not move saved progress backwards when an earlier step is edited", () => {

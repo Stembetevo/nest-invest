@@ -30,10 +30,11 @@ function formatAmount(amount: number, currency: string, masked: boolean) {
   }).format(amount / 100)
 }
 
-export function StripeIncomeCard({ connected, accountId, initialError }: {
+export function StripeIncomeCard({ connected, accountId, initialError, setupMessage }: {
   connected: boolean
   accountId?: string
   initialError?: string
+  setupMessage?: string | null
 }) {
   const [status, setStatus] = useState<"idle" | "syncing" | "done" | "error">("idle")
   const [message, setMessage] = useState(initialError ?? "")
@@ -91,12 +92,23 @@ export function StripeIncomeCard({ connected, accountId, initialError }: {
 
   if (!connected) {
     return (
+<<<<<<< HEAD
       <section className="flex items-center justify-between gap-4 rounded-3xl border border-primary/25 bg-primary/5 px-6 py-6">
         <div>
           <p className="font-heading text-lg leading-tight">Stripe income history</p>
           <p className="mt-1.5 text-sm text-muted-foreground">Connect Stripe to import income evidence.</p>
         </div>
         <Button asChild size="lg" className="shrink-0"><a href="/api/stripe/connect">Connect</a></Button>
+=======
+      <section className="rounded-2xl border border-primary/25 bg-primary/5 px-4 py-4">
+        <p className="text-sm font-semibold">Stripe income history</p>
+        <p className="mt-1 text-sm text-muted-foreground">Connect Stripe to import income evidence.</p>
+        {setupMessage ? <p className="mt-2 text-sm text-destructive">{setupMessage}</p> : null}
+        {message && message !== setupMessage ? (
+          <p className="mt-2 text-sm text-destructive">{message}</p>
+        ) : null}
+        <Button asChild className="mt-3"><a href="/api/stripe/connect">Connect Stripe</a></Button>
+>>>>>>> 60312ee4137d9795bcbd5d6d2105e910b070e91f
       </section>
     )
   }

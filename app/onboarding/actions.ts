@@ -47,15 +47,23 @@ export async function saveProfileStep(
   if (!parsed.ok) return { fieldErrors: parsed.errors }
 
   try {
-    const saved = await saveProgress(1, {
-      display_name: parsed.value.displayName,
-      creator_type: parsed.value.creatorType,
-    })
-    return saved ? { ok: true } : { error: SAVE_FAILED }
+    const { supabase, user } = await loadContext()
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        display_name: parsed.value.displayName,
+        creator_type: parsed.value.creatorType,
+        onboarding_step: 1,
+        onboarding_completed_at: new Date().toISOString(),
+      })
+      .eq("id", user.id)
+    if (error) return { error: SAVE_FAILED }
   } catch (error) {
     unstable_rethrow(error)
     return { error: SAVE_FAILED }
   }
+
+  redirect("/dashboard")
 }
 
 export async function saveSourcesStep(

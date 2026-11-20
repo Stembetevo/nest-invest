@@ -4,6 +4,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { AUTH_MESSAGES, authErrorMessage } from "@/lib/auth-errors"
 import { resolveAuthRedirect, safeNextPath } from "@/lib/auth-redirect"
+import { resolveOnboardingStep } from "@/lib/onboarding"
 import { fetchProfile } from "@/lib/creator-data"
 import { isSupabaseConfigured, SUPABASE_NOT_CONFIGURED } from "@/lib/supabase/env"
 import { createClient } from "@/lib/supabase/server"
@@ -61,7 +62,7 @@ export async function login(_prev: AuthFormState, formData: FormData): Promise<A
             pathname: url.pathname,
             search: url.search,
             isAuthenticated: true,
-            onboardingComplete: Boolean(profile?.onboardingCompletedAt),
+            onboardingComplete: profile ? resolveOnboardingStep(profile) === "complete" : false,
           }) ?? destination
       } catch {
         // A profile read failure should not undo a successful login.

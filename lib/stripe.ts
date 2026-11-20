@@ -70,3 +70,44 @@ export function decryptStripeToken(value: string, key: Uint8Array<ArrayBufferLik
     )
   ).toString("utf8")
 }
+
+/* ------------------------------------------------------------------ */
+/* Platform-level Stripe (Financial Connections + webhooks)            */
+/* Uses the platform's own keys, not a creator's Connect access token. */
+/* ------------------------------------------------------------------ */
+
+/** Platform secret key (sk_...), or null when it is not configured. */
+export function stripeSecretKey() {
+  return process.env.STRIPE_SECRET_KEY?.trim() || null
+}
+
+/** Platform publishable key (pk_...) sent to the browser to open the bank-link flow. */
+export function stripePublishableKey() {
+  return (
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim() ||
+    process.env.STRIPE_PUBLISHABLE_KEY?.trim() ||
+    null
+  )
+}
+
+let platformClient: Stripe | null = null
+
+/** Stripe client for the platform account, or null when STRIPE_SECRET_KEY is missing. */
+export function platformStripe() {
+  const key = stripeSecretKey()
+  if (!key) return null
+  platformClient ??= new Stripe(key)
+  return platformClient
+}
+
+/** A readable setup hint for a failed Stripe lookup, shown in place of the bank panel. */
+export function stripeSetupMessage(error: unknown) {
+  const detail = error instanceof Error ? error.message : ""
+  if (/Invalid API Key|No such|api_key|authentication/i.test(detail)) {
+    return "Stripe rejected the platform keys. Check STRIPE_SECRET_KEY and the publishable key."
+  }
+  if (/financial.?connections|not enabled|permission|access/i.test(detail)) {
+    return "Stripe Financial Connections is not enabled for this Stripe account yet."
+  }
+  return "Bank connections are temporarily unavailable. Try again shortly."
+}

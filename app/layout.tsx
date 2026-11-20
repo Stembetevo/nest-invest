@@ -1,18 +1,21 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
-import { DM_Sans, Fraunces } from "next/font/google"
+import localFont from "next/font/local"
 import { Providers } from "@/components/providers"
 import "./globals.css"
 
-const dmSans = DM_Sans({
+const dmSans = localFont({
+  src: "../node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2",
   variable: "--font-sans",
-  subsets: ["latin"],
+  weight: "100 1000",
+  display: "swap",
 })
 
-const fraunces = Fraunces({
+const fraunces = localFont({
+  src: "../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2",
   variable: "--font-heading",
-  subsets: ["latin"],
-  axes: ["opsz", "SOFT"],
+  weight: "100 900",
+  display: "swap",
 })
 
 export const metadata: Metadata = {

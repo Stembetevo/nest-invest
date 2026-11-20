@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@fontsource-variable/dm-sans':
+    specifier: ^5.3.0
+    version: 5.3.0
+  '@fontsource-variable/fraunces':
+    specifier: ^5.3.0
+    version: 5.3.0
   '@supabase/ssr':
     specifier: ^0.12.7
     version: 0.12.7(@supabase/supabase-js@2.117.3)
@@ -462,6 +468,14 @@ packages:
 
   /@floating-ui/utils@0.2.12:
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+    dev: false
+
+  /@fontsource-variable/dm-sans@5.3.0:
+    resolution: {integrity: sha512-BpUG5bqePiDFMBM4ZtLSlPdAIOM990uB1dlXzIf4aw21yQR7BmykedLXXXMqGWsR18aMLOsbWccwJNh3ztTQaA==}
+    dev: false
+
+  /@fontsource-variable/fraunces@5.3.0:
+    resolution: {integrity: sha512-9BYGySn4AHEJdgp9Z28tQ3X+laJMEOITXkQarZXeloWQZDq5oOvXJ3kDA8c7MGIfpogIaZfjrQBqmda8POOCKA==}
     dev: false
 
   /@hono/node-server@2.1.6(hono@4.13.16):

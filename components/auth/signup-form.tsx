@@ -1,6 +1,7 @@
 "use client"
 
 import { signup } from "@/app/auth/actions"
+import { GoogleButton } from "@/components/auth/google-button"
 import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
 import { PasswordField } from "@/components/auth/password-field"
@@ -8,7 +9,7 @@ import { SubmitButton } from "@/components/submit-button"
 import { MIN_PASSWORD_LENGTH, validateSignupForm } from "@/lib/validation"
 import { formText, useValidatedAction } from "@/components/use-validated-action"
 
-export function SignupForm() {
+export function SignupForm({ notice }: { notice?: string }) {
   const { state, formAction, pending, onSubmit, errors, serverError } = useValidatedAction(
     signup,
     {},
@@ -22,7 +23,15 @@ export function SignupForm() {
   if (state.message) return <FormAlert tone="success">{state.message}</FormAlert>
 
   return (
-    <form action={formAction} onSubmit={onSubmit} noValidate className="space-y-4">
+    <div className="space-y-4">
+      <GoogleButton next="/onboarding" />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <span className="h-px flex-1 bg-border" />
+        or
+        <span className="h-px flex-1 bg-border" />
+      </div>
+      <form action={formAction} onSubmit={onSubmit} noValidate className="space-y-4">
+      {notice && !serverError ? <FormAlert tone="error">{notice}</FormAlert> : null}
       {serverError ? <FormAlert tone="error">{serverError}</FormAlert> : null}
       <FormField
         id="email"
@@ -49,6 +58,7 @@ export function SignupForm() {
       <SubmitButton pending={pending} pendingLabel="Creating account…">
         Create free account
       </SubmitButton>
-    </form>
+      </form>
+    </div>
   )
 }

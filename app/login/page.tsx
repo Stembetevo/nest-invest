@@ -8,6 +8,7 @@ export const metadata: Metadata = { title: "Log in — Manikka" }
 
 const NOTICES: Record<string, string> = {
   link: "That link has expired or was already used. Request a new one below.",
+  oauth: "Google sign-in didn’t finish. Try again, or log in with email.",
 }
 
 export default async function LoginPage({

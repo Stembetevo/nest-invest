@@ -159,6 +159,31 @@ export async function resetPassword(
   redirect("/dashboard")
 }
 
+export async function signInWithGoogle(formData: FormData) {
+  const next = safeNextPath(text(formData, "next"), "/onboarding")
+  const back = next.startsWith("/onboarding") ? "/signup" : "/login"
+
+  if (!isSupabaseConfigured()) redirect(`${back}?error=oauth`)
+
+  let url: string | null = null
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${await siteUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
+        queryParams: { prompt: "select_account" },
+      },
+    })
+    if (!error && data.url) url = data.url
+  } catch {
+    url = null
+  }
+
+  if (!url) redirect(`${back}?error=oauth`)
+  redirect(url)
+}
+
 export async function signOut() {
   if (isSupabaseConfigured()) {
     const supabase = await createClient()

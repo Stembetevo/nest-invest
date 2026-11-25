@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { login } from "@/app/auth/actions"
+import { GoogleButton } from "@/components/auth/google-button"
 import { FormAlert } from "@/components/form-alert"
 import { FormField } from "@/components/form-field"
 import { PasswordField } from "@/components/auth/password-field"
@@ -21,7 +22,14 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
   )
 
   return (
-    <form action={formAction} onSubmit={onSubmit} noValidate className="space-y-4">
+    <div className="space-y-4">
+      <GoogleButton next={next ?? "/dashboard"} />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <span className="h-px flex-1 bg-border" />
+        or
+        <span className="h-px flex-1 bg-border" />
+      </div>
+      <form action={formAction} onSubmit={onSubmit} noValidate className="space-y-4">
       {notice && !serverError ? <FormAlert tone="error">{notice}</FormAlert> : null}
       {serverError ? <FormAlert tone="error">{serverError}</FormAlert> : null}
       {next ? <input type="hidden" name="next" value={next} /> : null}
@@ -50,6 +58,7 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
       <SubmitButton pending={pending} pendingLabel="Signing in…">
         Log in
       </SubmitButton>
-    </form>
+      </form>
+    </div>
   )
 }

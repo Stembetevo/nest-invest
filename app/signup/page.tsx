@@ -5,7 +5,12 @@ import { SignupForm } from "@/components/auth/signup-form"
 
 export const metadata: Metadata = { title: "Sign up — Manikka" }
 
-export default function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
   return (
     <AuthCard
       eyebrow="Creator income"
@@ -20,7 +25,7 @@ export default function SignupPage() {
         </>
       }
     >
-      <SignupForm />
+      <SignupForm notice={error === "oauth" ? "Google sign-in didn’t finish. Try again, or sign up with email." : undefined} />
     </AuthCard>
   )
 }
